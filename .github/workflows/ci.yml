@@ -1,0 +1,77 @@
+name: eCAL Integration Tests
+
+on:
+  repository_dispatch:
+    types: [run-tests]
+  workflow_dispatch:
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build ecal_base Image
+      run: |
+        docker build -t ecal_base -f integration_tests/docker/Dockerfile.ecal_base .
+
+    # Test 1: basic_pub_sub
+    - name: Run Test basic_pub_sub
+      run: |
+        cd integration_tests/basic_pub_sub
+        robot robottests/basic_pub_sub.robot || echo "Test failed"
+
+    # Test 2: message_validation
+    - name: Run Test message_validation
+      run: |
+        cd integration_tests/message_validation
+        robot robottests/message_validation.robot || echo "Test failed"
+
+    # Test 3: multi_pub_sub
+    - name: Run Test multi_pub_sub
+      run: |
+        cd integration_tests/multi_pub_sub
+        robot robottests/multi_pub_sub.robot || echo "Test failed"
+
+    # Test 4: network_crash
+    - name: Run Test network_crash
+      run: |
+        cd integration_tests/network_crash
+        robot robottests/network_crash.robot || echo "Test failed"
+
+    # Test 5: pub_crash
+    - name: Run Test pub_crash
+      run: |
+        cd integration_tests/pub_crash
+        robot robottests/pub_crash.robot || echo "Test failed"
+
+    # Test 6: sub_crash
+    - name: Run Test sub_crash
+      run: |
+        cd integration_tests/sub_crash
+        robot robottests/sub_crash.robot || echo "Test failed"
+
+    # Test 7: sub_send_crash
+    - name: Run Test sub_send_crash
+      run: |
+        cd integration_tests/sub_send_crash
+        robot robottests/sub_send_crash.robot || echo "Test failed"
+
+    # Archive all Robot logs
+    - name: Archive Robot Logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: robot-logs
+        path: |
+          integration_tests/**/log.html
+          integration_tests/**/output.xml
+          integration_tests/**/report.html
