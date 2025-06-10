@@ -23,10 +23,10 @@ jobs:
       run: |
         docker build -t ecal_base -f integration_tests/docker/Dockerfile.ecal_base .
     
-    - name: Install Robot Framework + Libraries
+    - name: Install Robot Framework + Docker SDK
       run: |
         python3 -m pip install --upgrade pip
-        pip install robotframework
+        pip install robotframework docker
 
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$PWD/integration_tests/lib" >> $GITHUB_ENV
