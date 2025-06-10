@@ -22,6 +22,11 @@ jobs:
     - name: Build ecal_base Image
       run: |
         docker build -t ecal_base -f integration_tests/docker/Dockerfile.ecal_base .
+    
+    - name: Install Robot Framework + Libraries
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install robotframework
 
     # Test 1: basic_pub_sub
     - name: Run Test basic_pub_sub
