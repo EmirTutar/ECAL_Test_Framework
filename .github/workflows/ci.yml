@@ -28,6 +28,9 @@ jobs:
         python3 -m pip install --upgrade pip
         pip install robotframework
 
+    - name: Set PYTHONPATH
+      run: echo "PYTHONPATH=$PWD/integration_tests/lib" >> $GITHUB_ENV
+
     # Test 1: basic_pub_sub
     - name: Run Test basic_pub_sub
       run: |
