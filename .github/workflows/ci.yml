@@ -93,8 +93,8 @@ jobs:
       if: always()
       run: |
         mkdir -p gh-pages/${REPORT_TS}
-        for dir in integration_tests/*/robottests; do
-          test_name=$(basename $(dirname $dir))
+        for dir in integration_tests/*; do
+          test_name=$(basename $dir)
           mkdir -p gh-pages/${REPORT_TS}/${test_name}
           cp $dir/log.html gh-pages/${REPORT_TS}/${test_name}/ || true
           cp $dir/report.html gh-pages/${REPORT_TS}/${test_name}/ || true
