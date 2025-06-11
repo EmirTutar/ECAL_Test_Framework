@@ -21,6 +21,10 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
+    - name: Pull existing gh-pages branch into folder
+      run: |
+        git clone --branch gh-pages https://github.com/${{ github.repository }} gh-pages || mkdir gh-pages
+
     - name: Create Timestamped Reports Folder
       run: |
         echo "REPORT_TS=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV 
@@ -82,8 +86,7 @@ jobs:
         cd integration_tests/sub_send_crash
         robot robottests/sub_send_crash.robot || echo "Test failed"
 
-    # Archive all Robot logs
-    - name: Archive Robot Logs (for manual download only)
+    - name: Archive all Robot logs (for manual download only)
       if: always()
       uses: actions/upload-artifact@v4
       with:
@@ -110,9 +113,6 @@ jobs:
     - name: Generate index.html with Dropdowns
       if: always()
       run: |
-        git fetch origin gh-pages
-        git worktree add gh-pages origin/gh-pages
-        mkdir -p gh-pages
         INDEX_FILE=gh-pages/index.html
         echo "<!DOCTYPE html>" > $INDEX_FILE
         echo "<html lang='en'><head><meta charset='UTF-8'>" >> $INDEX_FILE
@@ -134,7 +134,6 @@ jobs:
           echo "<summary>Test Run: ${folder}</summary>" >> $INDEX_FILE
           echo "<ul>" >> $INDEX_FILE
           for test in $(ls -1 gh-pages/$folder); do
-            # nur anzeigen, wenn mind. ein Reportfile vorhanden ist
             if [[ -f "gh-pages/$folder/$test/log.html" || -f "gh-pages/$folder/$test/report.html" || -f "gh-pages/$folder/$test/output.xml" ]]; then
               echo "<li><b>${test}</b>: " >> $INDEX_FILE
               [[ -f "gh-pages/$folder/$test/log.html" ]] && echo "<a href='${folder}/${test}/log.html'>log</a> | " >> $INDEX_FILE
