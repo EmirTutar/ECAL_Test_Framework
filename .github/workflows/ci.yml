@@ -122,13 +122,9 @@ jobs:
 
     - name: Deploy to GitHub Pages
       if: always()
-      run: |
-        cd gh-pages
-        touch .nojekyll
-        git init
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git checkout -b gh-pages
-        git add .
-        git commit -m "Deploy test report at ${REPORT_TS}"
-        git push --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" gh-pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./gh-pages
+        publish_branch: gh-pages
+        commit_message: "Deploy test report at ${{ env.REPORT_TS }}"
