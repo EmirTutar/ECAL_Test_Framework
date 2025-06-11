@@ -74,11 +74,11 @@ jobs:
         robot robottests/sub_send_crash.robot || echo "Test failed"
 
     # Archive all Robot logs
-    - name: Archive Robot Logs
+    - name: Archive Robot Logs (for manual download only)
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: robot-logs
+        name: robot-reports
         path: |
           integration_tests/**/log.html
           integration_tests/**/output.xml
