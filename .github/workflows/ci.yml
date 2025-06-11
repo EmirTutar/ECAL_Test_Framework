@@ -21,6 +21,10 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
+    - name: Create Timestamped Reports Folder
+      run: |
+        echo "REPORT_TS=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV 
+
     - name: Set up Docker
       uses: docker/setup-buildx-action@v3
 
@@ -89,11 +93,6 @@ jobs:
           integration_tests/**/output.xml
           integration_tests/**/report.html
 
-    - name: Create Timestamped Reports Folder
-      if: always()
-      run: |
-        echo "REPORT_TS=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV
-
     - name: Copy only valid Robot Reports to gh-pages folder
       if: always()
       run: |
@@ -111,6 +110,8 @@ jobs:
     - name: Generate index.html with Dropdowns
       if: always()
       run: |
+        git fetch origin gh-pages
+        git worktree add gh-pages origin/gh-pages
         mkdir -p gh-pages
         INDEX_FILE=gh-pages/index.html
         echo "<!DOCTYPE html>" > $INDEX_FILE
