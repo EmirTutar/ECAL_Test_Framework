@@ -83,3 +83,52 @@ jobs:
           integration_tests/**/log.html
           integration_tests/**/output.xml
           integration_tests/**/report.html
+
+    - name: Create Timestamped Reports Folder
+      if: always()
+      run: |
+        echo "REPORT_TS=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV
+
+    - name: Copy Robot Reports to gh-pages folder with timestamps
+      if: always()
+      run: |
+        mkdir -p gh-pages/${REPORT_TS}
+        for dir in integration_tests/*/robottests; do
+          test_name=$(basename $(dirname $dir))
+          mkdir -p gh-pages/${REPORT_TS}/${test_name}
+          cp $dir/log.html gh-pages/${REPORT_TS}/${test_name}/ || true
+          cp $dir/report.html gh-pages/${REPORT_TS}/${test_name}/ || true
+          cp $dir/output.xml gh-pages/${REPORT_TS}/${test_name}/ || true
+        done
+
+    - name: Generate index.html for GitHub Pages
+      if: always()
+      run: |
+        INDEX_FILE=gh-pages/index.html
+        echo "<html><head><title>eCAL Integration Reports</title></head><body>" > $INDEX_FILE
+        echo "<h1>eCAL Test Runs</h1><ul>" >> $INDEX_FILE
+        for folder in $(ls -1 gh-pages | grep -E '^[0-9]{4}-'); do
+          echo "<li><b>${folder}</b><ul>" >> $INDEX_FILE
+          for test in $(ls -1 gh-pages/$folder); do
+            echo "<li>${test}: " >> $INDEX_FILE
+            echo "<a href='${folder}/${test}/log.html'>log</a> | " >> $INDEX_FILE
+            echo "<a href='${folder}/${test}/report.html'>report</a> | " >> $INDEX_FILE
+            echo "<a href='${folder}/${test}/output.xml'>xml</a>" >> $INDEX_FILE
+            echo "</li>" >> $INDEX_FILE
+          done
+          echo "</ul></li>" >> $INDEX_FILE
+        done
+        echo "</ul></body></html>" >> $INDEX_FILE
+
+    - name: Deploy to GitHub Pages
+      if: always()
+      run: |
+        cd gh-pages
+        touch .nojekyll
+        git init
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git checkout -b gh-pages
+        git add .
+        git commit -m "Deploy test report at ${REPORT_TS}"
+        git push --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" gh-pages
