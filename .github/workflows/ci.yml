@@ -156,3 +156,4 @@ jobs:
         publish_branch: gh-pages
         commit_message: "Deploy test report at ${{ env.REPORT_TS }}"
         allow_empty_commit: true
+        keep_files: true
