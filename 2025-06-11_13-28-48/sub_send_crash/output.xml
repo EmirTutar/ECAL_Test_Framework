@@ -1,0 +1,701 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.3 (Python 3.12.3 on linux)" generated="2025-06-11T13:25:46.358825" rpa="false" schemaversion="5">
+<suite id="s1" name="Sub Send Crash" source="/home/runner/work/ECAL_Test_Framework/ECAL_Test_Framework/integration_tests/sub_send_crash/robottests/sub_send_crash.robot">
+<kw name="Init Test Context" type="SETUP">
+<kw name="Set Test Context" owner="GlobalPathsLibrary">
+<arg>sub_send_crash</arg>
+<arg>sub_send_crash</arg>
+<doc>Sets the test folder (e.g. basic_pub_sub or message_validation) and tag prefix (e.g. basic_pub_sub).
+Should be called once in Suite Setup if you're using non-default test cases.</doc>
+<status status="PASS" start="2025-06-11T13:25:46.451550" elapsed="0.000165"/>
+</kw>
+<kw name="Get Build Script Path" owner="GlobalPathsLibrary">
+<msg time="2025-06-11T13:25:46.451942" level="INFO">${build} = /home/runner/work/ECAL_Test_Framework/ECAL_Test_Framework/integration_tests/sub_send_crash/scripts/build_images.sh</msg>
+<var>${build}</var>
+<status status="PASS" start="2025-06-11T13:25:46.451830" elapsed="0.000139"/>
+</kw>
+<kw name="Get Network Name" owner="GlobalPathsLibrary">
+<msg time="2025-06-11T13:25:46.452140" level="INFO">${net} = ecal_test_net</msg>
+<var>${net}</var>
+<status status="PASS" start="2025-06-11T13:25:46.452043" elapsed="0.000124"/>
+</kw>
+<kw name="Get Build Script Args" owner="GlobalPathsLibrary">
+<msg time="2025-06-11T13:25:46.452356" level="INFO">${args} = ['sub_send_crash']</msg>
+<var>${args}</var>
+<status status="PASS" start="2025-06-11T13:25:46.452236" elapsed="0.000139"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:25:46.452627" level="INFO">${BUILD_SCRIPT} = /home/runner/work/ECAL_Test_Framework/ECAL_Test_Framework/integration_tests/sub_send_crash/scripts/build_images.sh</msg>
+<arg>${BUILD_SCRIPT}</arg>
+<arg>${build}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2025-06-11T13:25:46.452463" elapsed="0.000195"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:25:46.452866" level="INFO">${NETWORK} = ecal_test_net</msg>
+<arg>${NETWORK}</arg>
+<arg>${net}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2025-06-11T13:25:46.452739" elapsed="0.000157"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>[SETUP] Building image...</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-06-11T13:25:46.452969" elapsed="0.000116"/>
+</kw>
+<kw name="Run Process" owner="Process">
+<msg time="2025-06-11T13:25:46.453364" level="INFO">Starting process:
+/home/runner/work/ECAL_Test_Framework/ECAL_Test_Framework/integration_tests/sub_send_crash/scripts/build_images.sh sub_send_crash</msg>
+<msg time="2025-06-11T13:25:46.453760" level="INFO">Waiting for process to complete.</msg>
+<msg time="2025-06-11T13:25:56.407474" level="INFO">Process completed.</msg>
+<msg time="2025-06-11T13:25:56.407640" level="INFO">${result} = &lt;result object with rc 0&gt;</msg>
+<var>${result}</var>
+<arg>${BUILD_SCRIPT}</arg>
+<arg>@{args}</arg>
+<doc>Runs a process and waits for it to complete.</doc>
+<status status="PASS" start="2025-06-11T13:25:46.453172" elapsed="9.954492"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2025-06-11T13:25:56.408299" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2025-06-11T13:25:56.407813" elapsed="0.000546"/>
+</kw>
+<kw name="Create Docker Network" owner="MyDockerLibrary">
+<arg>${NETWORK}</arg>
+<status status="PASS" start="2025-06-11T13:25:56.408444" elapsed="0.007537"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-06-11T13:25:59.416416" level="INFO">Slept 3 seconds.</msg>
+<arg>3s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-06-11T13:25:56.416125" elapsed="3.000419"/>
+</kw>
+<status status="PASS" start="2025-06-11T13:25:46.451063" elapsed="12.965584"/>
+</kw>
+<test id="s1-t1" name="Crash During Reception (SHM)" line="36">
+<kw name="Run Local Crash Receive Test">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:25:59.417811" level="INFO">${IMAGE} = sub_send_crash_local_shm</msg>
+<var>${IMAGE}</var>
+<arg>${BASE_IMAGE}_${layer_tag}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:25:59.417651" elapsed="0.000182"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:25:59.418024" level="INFO">${CONTAINER} = local_all_local_shm</msg>
+<var>${CONTAINER}</var>
+<arg>local_all_${layer_tag}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:25:59.417910" elapsed="0.000132"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\n[INFO] Starting crash test in LOCAL mode: ${layer_tag}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-06-11T13:25:59.418110" elapsed="0.000127"/>
+</kw>
+<kw name="Start Container" owner="MyDockerLibrary">
+<arg>${CONTAINER}</arg>
+<arg>${IMAGE}</arg>
+<arg>local_all</arg>
+<arg>${layer_tag}</arg>
+<arg>test_topic</arg>
+<arg>${CONTAINER}</arg>
+<arg>network=${NETWORK}</arg>
+<status status="PASS" start="2025-06-11T13:25:59.418348" elapsed="0.142690"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-06-11T13:26:34.561711" level="INFO">Slept 35 seconds.</msg>
+<arg>35s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-06-11T13:25:59.561251" elapsed="35.000576"/>
+</kw>
+<kw name="Get Container Logs" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:26:34.564945" level="INFO">${logs} = [Entrypoint] Starting all processes locally in one container (mode local_shm)
+Shared memory monitoring is enabled (domain: ecal_mon - queue size: 1024)
+[Publisher] Prepared 100MB message.
+[Publisher] ...</msg>
+<var>${logs}</var>
+<arg>${CONTAINER}</arg>
+<status status="PASS" start="2025-06-11T13:26:34.561991" elapsed="0.002985"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\n[LOCAL TEST CONTAINER OUTPUT]\n${logs}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-06-11T13:26:34.565095" elapsed="0.000202"/>
+</kw>
+<kw name="Wait For Container Exit" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:26:34.566545" level="INFO">${exit_code} = 0</msg>
+<var>${exit_code}</var>
+<arg>${CONTAINER}</arg>
+<status status="PASS" start="2025-06-11T13:26:34.565407" elapsed="0.001162"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2025-06-11T13:26:34.566799" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${exit_code}</arg>
+<arg>0</arg>
+<arg>Local container failed!</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2025-06-11T13:26:34.566653" elapsed="0.000193"/>
+</kw>
+<kw name="Get Container Logs" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:26:34.569064" level="INFO">${logs} = [Entrypoint] Starting all processes locally in one container (mode local_shm)
+Shared memory monitoring is enabled (domain: ecal_mon - queue size: 1024)
+[Publisher] Prepared 100MB message.
+[Publisher] ...</msg>
+<var>${logs}</var>
+<arg>${CONTAINER}</arg>
+<status status="PASS" start="2025-06-11T13:26:34.566924" elapsed="0.002166"/>
+</kw>
+<kw name="Log Test Summary" owner="MyDockerLibrary">
+<arg>Local Crash Receive Test ${layer_tag}</arg>
+<arg>${True}</arg>
+<status status="PASS" start="2025-06-11T13:26:34.569172" elapsed="0.000192"/>
+</kw>
+<kw name="Stop Container" owner="MyDockerLibrary">
+<arg>${CONTAINER}</arg>
+<status status="PASS" start="2025-06-11T13:26:34.569460" elapsed="0.005321"/>
+</kw>
+<arg>local_shm</arg>
+<status status="PASS" start="2025-06-11T13:25:59.417402" elapsed="35.157450"/>
+</kw>
+<tag>crash_receive_local_shm</tag>
+<status status="PASS" start="2025-06-11T13:25:59.416731" elapsed="35.158230"/>
+</test>
+<test id="s1-t2" name="Crash with Zero Copy Enabled in Reception (SHM)" line="40">
+<kw name="Run with Zero Copy Enabled Local Crash Receive Test">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:26:34.576227" level="INFO">${IMAGE} = sub_send_crash_local_shm</msg>
+<var>${IMAGE}</var>
+<arg>${BASE_IMAGE}_${layer_tag}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:26:34.576082" elapsed="0.000167"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:26:34.576463" level="INFO">${CONTAINER} = zero_copy_local_all_local_shm</msg>
+<var>${CONTAINER}</var>
+<arg>zero_copy_local_all_${layer_tag}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:26:34.576350" elapsed="0.000131"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\n[INFO] Starting crash test with zero copy enabled in LOCAL mode: ${layer_tag}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-06-11T13:26:34.576553" elapsed="0.000126"/>
+</kw>
+<kw name="Start Container" owner="MyDockerLibrary">
+<arg>${CONTAINER}</arg>
+<arg>${IMAGE}</arg>
+<arg>zero_copy_local_all</arg>
+<arg>${layer_tag}</arg>
+<arg>test_topic</arg>
+<arg>${CONTAINER}</arg>
+<arg>network=${NETWORK}</arg>
+<status status="PASS" start="2025-06-11T13:26:34.576783" elapsed="0.136037"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-06-11T13:27:09.713382" level="INFO">Slept 35 seconds.</msg>
+<arg>35s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-06-11T13:26:34.713065" elapsed="35.000434"/>
+</kw>
+<kw name="Get Container Logs" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:27:09.716621" level="INFO">${logs} = [Entrypoint] Starting all processes with Zero-Copy Publisher in one container (mode local_shm)
+Shared memory monitoring is enabled (domain: ecal_mon - queue size: 1024)
+[Publisher] Prepared 50MB messa...</msg>
+<var>${logs}</var>
+<arg>${CONTAINER}</arg>
+<status status="PASS" start="2025-06-11T13:27:09.713661" elapsed="0.002993"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\n[LOCAL SHM WITH ZERO COPY TEST CONTAINER OUTPUT]\n${logs}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-06-11T13:27:09.716785" elapsed="0.000188"/>
+</kw>
+<kw name="Wait For Container Exit" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:27:09.718254" level="INFO">${exit_code} = 1</msg>
+<var>${exit_code}</var>
+<arg>${CONTAINER}</arg>
+<status status="PASS" start="2025-06-11T13:27:09.717069" elapsed="0.001231"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2025-06-11T13:27:09.718528" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<msg time="2025-06-11T13:27:09.718643" level="FAIL">Local container with zero copy shm failed!: 1 != 0</msg>
+<arg>${exit_code}</arg>
+<arg>0</arg>
+<arg>Local container with zero copy shm failed!</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="FAIL" start="2025-06-11T13:27:09.718383" elapsed="0.000407">Local container with zero copy shm failed!: 1 != 0</status>
+</kw>
+<kw name="Get Container Logs" owner="MyDockerLibrary">
+<var>${logs}</var>
+<arg>${CONTAINER}</arg>
+<status status="NOT RUN" start="2025-06-11T13:27:09.718888" elapsed="0.000018"/>
+</kw>
+<kw name="Log Test Summary" owner="MyDockerLibrary">
+<arg>Local Crash with zero copy enabled Test ${layer_tag}</arg>
+<arg>${True}</arg>
+<status status="NOT RUN" start="2025-06-11T13:27:09.718968" elapsed="0.000017"/>
+</kw>
+<kw name="Stop Container" owner="MyDockerLibrary">
+<arg>${CONTAINER}</arg>
+<status status="NOT RUN" start="2025-06-11T13:27:09.719044" elapsed="0.000013"/>
+</kw>
+<arg>local_shm</arg>
+<status status="FAIL" start="2025-06-11T13:26:34.575873" elapsed="35.143275">Local container with zero copy shm failed!: 1 != 0</status>
+</kw>
+<tag>zero_copy_crash_receive_local_shm</tag>
+<status status="FAIL" start="2025-06-11T13:26:34.575501" elapsed="35.143804">Local container with zero copy shm failed!: 1 != 0</status>
+</test>
+<test id="s1-t3" name="Crash During Reception (TCP)" line="49">
+<kw name="Run Local Crash Receive Test">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:27:09.720462" level="INFO">${IMAGE} = sub_send_crash_local_tcp</msg>
+<var>${IMAGE}</var>
+<arg>${BASE_IMAGE}_${layer_tag}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:27:09.720322" elapsed="0.000161"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:27:09.720664" level="INFO">${CONTAINER} = local_all_local_tcp</msg>
+<var>${CONTAINER}</var>
+<arg>local_all_${layer_tag}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:27:09.720554" elapsed="0.000128"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\n[INFO] Starting crash test in LOCAL mode: ${layer_tag}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-06-11T13:27:09.720748" elapsed="0.000122"/>
+</kw>
+<kw name="Start Container" owner="MyDockerLibrary">
+<arg>${CONTAINER}</arg>
+<arg>${IMAGE}</arg>
+<arg>local_all</arg>
+<arg>${layer_tag}</arg>
+<arg>test_topic</arg>
+<arg>${CONTAINER}</arg>
+<arg>network=${NETWORK}</arg>
+<status status="PASS" start="2025-06-11T13:27:09.720963" elapsed="0.130781"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-06-11T13:27:44.852257" level="INFO">Slept 35 seconds.</msg>
+<arg>35s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-06-11T13:27:09.851932" elapsed="35.000472"/>
+</kw>
+<kw name="Get Container Logs" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:27:44.855383" level="INFO">${logs} = [Entrypoint] Starting all processes locally in one container (mode local_tcp)
+[Publisher] Prepared 100MB message.
+[Publisher] Waiting for at least 2 subscriber(s) on topic: test_topic
+1749648431854 ms...</msg>
+<var>${logs}</var>
+<arg>${CONTAINER}</arg>
+<status status="PASS" start="2025-06-11T13:27:44.852569" elapsed="0.002846"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\n[LOCAL TEST CONTAINER OUTPUT]\n${logs}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-06-11T13:27:44.855517" elapsed="0.000173"/>
+</kw>
+<kw name="Wait For Container Exit" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:27:44.857135" level="INFO">${exit_code} = 0</msg>
+<var>${exit_code}</var>
+<arg>${CONTAINER}</arg>
+<status status="PASS" start="2025-06-11T13:27:44.855793" elapsed="0.001364"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2025-06-11T13:27:44.857401" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${exit_code}</arg>
+<arg>0</arg>
+<arg>Local container failed!</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2025-06-11T13:27:44.857238" elapsed="0.000209"/>
+</kw>
+<kw name="Get Container Logs" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:27:44.859541" level="INFO">${logs} = [Entrypoint] Starting all processes locally in one container (mode local_tcp)
+[Publisher] Prepared 100MB message.
+[Publisher] Waiting for at least 2 subscriber(s) on topic: test_topic
+1749648431854 ms...</msg>
+<var>${logs}</var>
+<arg>${CONTAINER}</arg>
+<status status="PASS" start="2025-06-11T13:27:44.857525" elapsed="0.002041"/>
+</kw>
+<kw name="Log Test Summary" owner="MyDockerLibrary">
+<arg>Local Crash Receive Test ${layer_tag}</arg>
+<arg>${True}</arg>
+<status status="PASS" start="2025-06-11T13:27:44.859649" elapsed="0.000155"/>
+</kw>
+<kw name="Stop Container" owner="MyDockerLibrary">
+<arg>${CONTAINER}</arg>
+<status status="PASS" start="2025-06-11T13:27:44.859912" elapsed="0.005059"/>
+</kw>
+<arg>local_tcp</arg>
+<status status="PASS" start="2025-06-11T13:27:09.720112" elapsed="35.144921"/>
+</kw>
+<tag>crash_receive_local_tcp</tag>
+<status status="PASS" start="2025-06-11T13:27:09.719785" elapsed="35.145379"/>
+</test>
+<test id="s1-t4" name="Crash During Reception (Network UDP)" line="53">
+<kw name="Run Network Crash Receive Test">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:27:44.866596" level="INFO">${IMAGE} = sub_send_crash_network_udp</msg>
+<var>${IMAGE}</var>
+<arg>${BASE_IMAGE}_${layer_tag}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:27:44.866453" elapsed="0.000163"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:27:44.866774" level="INFO">${TOPIC} = test_topic</msg>
+<var>${TOPIC}</var>
+<arg>test_topic</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:27:44.866690" elapsed="0.000102"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:27:44.866964" level="INFO">${SUB_OK} = sub_ok_network_udp</msg>
+<var>${SUB_OK}</var>
+<arg>sub_ok_${layer_tag}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:27:44.866857" elapsed="0.000124"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:27:44.867150" level="INFO">${SUB_CRASH} = sub_crash_network_udp</msg>
+<var>${SUB_CRASH}</var>
+<arg>sub_crash_${layer_tag}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:27:44.867047" elapsed="0.000120"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:27:44.867371" level="INFO">${PUBLISHER} = pub_network_udp</msg>
+<var>${PUBLISHER}</var>
+<arg>pub_${layer_tag}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:27:44.867232" elapsed="0.000158"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\n[INFO] Starting crash test in NETWORK mode: ${layer_tag}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-06-11T13:27:44.867458" elapsed="0.000120"/>
+</kw>
+<kw name="Start Container" owner="MyDockerLibrary">
+<arg>${SUB_OK}</arg>
+<arg>${IMAGE}</arg>
+<arg>test_subscriber</arg>
+<arg>${layer_tag}</arg>
+<arg>${TOPIC}</arg>
+<arg>${SUB_OK}</arg>
+<arg>network=${NETWORK}</arg>
+<status status="PASS" start="2025-06-11T13:27:44.867670" elapsed="0.132265"/>
+</kw>
+<kw name="Start Container" owner="MyDockerLibrary">
+<arg>${SUB_CRASH}</arg>
+<arg>${IMAGE}</arg>
+<arg>crash_subscriber</arg>
+<arg>${layer_tag}</arg>
+<arg>${TOPIC}</arg>
+<arg>${SUB_CRASH}</arg>
+<arg>network=${NETWORK}</arg>
+<status status="PASS" start="2025-06-11T13:27:45.000135" elapsed="0.141820"/>
+</kw>
+<kw name="Start Container" owner="MyDockerLibrary">
+<arg>${PUBLISHER}</arg>
+<arg>${IMAGE}</arg>
+<arg>large_publisher</arg>
+<arg>${layer_tag}</arg>
+<arg>${TOPIC}</arg>
+<arg>${PUBLISHER}</arg>
+<arg>network=${NETWORK}</arg>
+<status status="PASS" start="2025-06-11T13:27:45.142161" elapsed="0.128931"/>
+</kw>
+<kw name="Wait For Container Exit" owner="MyDockerLibrary">
+<arg>${SUB_OK}</arg>
+<status status="PASS" start="2025-06-11T13:27:45.271312" elapsed="30.798065"/>
+</kw>
+<kw name="Wait For Container Exit" owner="MyDockerLibrary">
+<arg>${SUB_CRASH}</arg>
+<status status="PASS" start="2025-06-11T13:28:16.069581" elapsed="0.001505"/>
+</kw>
+<kw name="Wait For Container Exit" owner="MyDockerLibrary">
+<arg>${PUBLISHER}</arg>
+<status status="PASS" start="2025-06-11T13:28:16.071173" elapsed="0.000961"/>
+</kw>
+<kw name="Get Container Logs" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:28:16.074409" level="INFO">${log1} = [Entrypoint] Starting stable subscriber in mode network_udp
+[Test_Sub] Ready and waiting...
+[Test_Sub] Received 52428800 bytes (message 1)
+[Test_Sub] Received 52428800 bytes (message 2)
+[Test_Sub] Rec...</msg>
+<var>${log1}</var>
+<arg>${SUB_OK}</arg>
+<status status="PASS" start="2025-06-11T13:28:16.072221" elapsed="0.002215"/>
+</kw>
+<kw name="Get Container Logs" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:28:16.076522" level="INFO">${log2} = [Entrypoint] Starting crashing subscriber in mode network_udp
+[Crash_Sub] Listening to topic 'test_topic' in mode 'network_udp'
+[Crash_Sub] Received 52428800 bytes
+[Crash_Sub] Simulating crash after 2...</msg>
+<var>${log2}</var>
+<arg>${SUB_CRASH}</arg>
+<status status="PASS" start="2025-06-11T13:28:16.074516" elapsed="0.002031"/>
+</kw>
+<kw name="Get Container Logs" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:28:16.078616" level="INFO">${log3} = [Entrypoint] Starting large publisher in mode network_udp
+[Publisher] Prepared 100MB message.
+[Publisher] Waiting for at least 2 subscriber(s) on topic: test_topic
+[Publisher] Found 2 subscriber(s). P...</msg>
+<var>${log3}</var>
+<arg>${PUBLISHER}</arg>
+<status status="PASS" start="2025-06-11T13:28:16.076628" elapsed="0.002013"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\n[LOG: SUBSCRIBER]\n${log1}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-06-11T13:28:16.078726" elapsed="0.000162"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\n[LOG: CRASH_SUBSCRIBER]\n${log2}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-06-11T13:28:16.078984" elapsed="0.000139"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\n[LOG: PUBLISHER]\n${log3}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-06-11T13:28:16.079220" elapsed="0.000202"/>
+</kw>
+<kw name="Wait For Container Exit" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:28:16.080524" level="INFO">${exit1} = 0</msg>
+<var>${exit1}</var>
+<arg>${SUB_OK}</arg>
+<status status="PASS" start="2025-06-11T13:28:16.079528" elapsed="0.001019"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2025-06-11T13:28:16.080764" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${exit1}</arg>
+<arg>0</arg>
+<arg>Stable subscriber failed unexpectedly!</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2025-06-11T13:28:16.080627" elapsed="0.000182"/>
+</kw>
+<kw name="Log Test Summary" owner="MyDockerLibrary">
+<arg>Network Crash Receive Test ${layer_tag}</arg>
+<arg>${True}</arg>
+<status status="PASS" start="2025-06-11T13:28:16.080884" elapsed="0.000135"/>
+</kw>
+<kw name="Stop Container" owner="MyDockerLibrary">
+<arg>${SUB_OK}</arg>
+<status status="PASS" start="2025-06-11T13:28:16.081112" elapsed="0.005328"/>
+</kw>
+<kw name="Stop Container" owner="MyDockerLibrary">
+<arg>${SUB_CRASH}</arg>
+<status status="PASS" start="2025-06-11T13:28:16.086523" elapsed="0.004717"/>
+</kw>
+<kw name="Stop Container" owner="MyDockerLibrary">
+<arg>${PUBLISHER}</arg>
+<status status="PASS" start="2025-06-11T13:28:16.091350" elapsed="0.005293"/>
+</kw>
+<arg>network_udp</arg>
+<arg>network</arg>
+<status status="PASS" start="2025-06-11T13:27:44.866202" elapsed="31.230502"/>
+</kw>
+<tag>crash_receive_network_udp</tag>
+<status status="PASS" start="2025-06-11T13:27:44.865775" elapsed="31.231029"/>
+</test>
+<test id="s1-t5" name="Crash During Reception (Network TCP)" line="57">
+<kw name="Run Network Crash Receive Test">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:28:16.098825" level="INFO">${IMAGE} = sub_send_crash_network_tcp</msg>
+<var>${IMAGE}</var>
+<arg>${BASE_IMAGE}_${layer_tag}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:28:16.098685" elapsed="0.000161"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:28:16.099003" level="INFO">${TOPIC} = test_topic</msg>
+<var>${TOPIC}</var>
+<arg>test_topic</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:28:16.098920" elapsed="0.000100"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:28:16.099192" level="INFO">${SUB_OK} = sub_ok_network_tcp</msg>
+<var>${SUB_OK}</var>
+<arg>sub_ok_${layer_tag}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:28:16.099086" elapsed="0.000167"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:28:16.099474" level="INFO">${SUB_CRASH} = sub_crash_network_tcp</msg>
+<var>${SUB_CRASH}</var>
+<arg>sub_crash_${layer_tag}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:28:16.099358" elapsed="0.000134"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2025-06-11T13:28:16.099663" level="INFO">${PUBLISHER} = pub_network_tcp</msg>
+<var>${PUBLISHER}</var>
+<arg>pub_${layer_tag}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2025-06-11T13:28:16.099560" elapsed="0.000120"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\n[INFO] Starting crash test in NETWORK mode: ${layer_tag}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-06-11T13:28:16.099755" elapsed="0.000146"/>
+</kw>
+<kw name="Start Container" owner="MyDockerLibrary">
+<arg>${SUB_OK}</arg>
+<arg>${IMAGE}</arg>
+<arg>test_subscriber</arg>
+<arg>${layer_tag}</arg>
+<arg>${TOPIC}</arg>
+<arg>${SUB_OK}</arg>
+<arg>network=${NETWORK}</arg>
+<status status="PASS" start="2025-06-11T13:28:16.100001" elapsed="0.142695"/>
+</kw>
+<kw name="Start Container" owner="MyDockerLibrary">
+<arg>${SUB_CRASH}</arg>
+<arg>${IMAGE}</arg>
+<arg>crash_subscriber</arg>
+<arg>${layer_tag}</arg>
+<arg>${TOPIC}</arg>
+<arg>${SUB_CRASH}</arg>
+<arg>network=${NETWORK}</arg>
+<status status="PASS" start="2025-06-11T13:28:16.242861" elapsed="0.125796"/>
+</kw>
+<kw name="Start Container" owner="MyDockerLibrary">
+<arg>${PUBLISHER}</arg>
+<arg>${IMAGE}</arg>
+<arg>large_publisher</arg>
+<arg>${layer_tag}</arg>
+<arg>${TOPIC}</arg>
+<arg>${PUBLISHER}</arg>
+<arg>network=${NETWORK}</arg>
+<status status="PASS" start="2025-06-11T13:28:16.368840" elapsed="0.124030"/>
+</kw>
+<kw name="Wait For Container Exit" owner="MyDockerLibrary">
+<arg>${SUB_OK}</arg>
+<status status="PASS" start="2025-06-11T13:28:16.493068" elapsed="30.816610"/>
+</kw>
+<kw name="Wait For Container Exit" owner="MyDockerLibrary">
+<arg>${SUB_CRASH}</arg>
+<status status="PASS" start="2025-06-11T13:28:47.309884" elapsed="0.001523"/>
+</kw>
+<kw name="Wait For Container Exit" owner="MyDockerLibrary">
+<arg>${PUBLISHER}</arg>
+<status status="PASS" start="2025-06-11T13:28:47.311521" elapsed="0.001174"/>
+</kw>
+<kw name="Get Container Logs" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:28:47.315026" level="INFO">${log1} = [Entrypoint] Starting stable subscriber in mode network_tcp
+[Test_Sub] Ready and waiting...
+[Test_Sub] Received 52428800 bytes (message 1)
+[Test_Sub] Received 52428800 bytes (message 2)
+[Test_Sub] Rec...</msg>
+<var>${log1}</var>
+<arg>${SUB_OK}</arg>
+<status status="PASS" start="2025-06-11T13:28:47.312810" elapsed="0.002243"/>
+</kw>
+<kw name="Get Container Logs" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:28:47.317163" level="INFO">${log2} = [Entrypoint] Starting crashing subscriber in mode network_tcp
+[Crash_Sub] Listening to topic 'test_topic' in mode 'network_tcp'
+[Crash_Sub] Received 52428800 bytes
+[Crash_Sub] Simulating crash after 2...</msg>
+<var>${log2}</var>
+<arg>${SUB_CRASH}</arg>
+<status status="PASS" start="2025-06-11T13:28:47.315142" elapsed="0.002046"/>
+</kw>
+<kw name="Get Container Logs" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:28:47.319391" level="INFO">${log3} = [Entrypoint] Starting large publisher in mode network_tcp
+[Publisher] Prepared 100MB message.
+[Publisher] Waiting for at least 2 subscriber(s) on topic: test_topic
+1749648497244 ms | 1218aab33016 | la...</msg>
+<var>${log3}</var>
+<arg>${PUBLISHER}</arg>
+<status status="PASS" start="2025-06-11T13:28:47.317296" elapsed="0.002121"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\n[LOG: SUBSCRIBER]\n${log1}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-06-11T13:28:47.319503" elapsed="0.000160"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\n[LOG: CRASH_SUBSCRIBER]\n${log2}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-06-11T13:28:47.319783" elapsed="0.000220"/>
+</kw>
+<kw name="Log To Console" owner="BuiltIn">
+<arg>\n[LOG: PUBLISHER]\n${log3}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" start="2025-06-11T13:28:47.320122" elapsed="0.000246"/>
+</kw>
+<kw name="Wait For Container Exit" owner="MyDockerLibrary">
+<msg time="2025-06-11T13:28:47.321848" level="INFO">${exit1} = 0</msg>
+<var>${exit1}</var>
+<arg>${SUB_OK}</arg>
+<status status="PASS" start="2025-06-11T13:28:47.320470" elapsed="0.001412"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2025-06-11T13:28:47.322184" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${exit1}</arg>
+<arg>0</arg>
+<arg>Stable subscriber failed unexpectedly!</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2025-06-11T13:28:47.321998" elapsed="0.000253"/>
+</kw>
+<kw name="Log Test Summary" owner="MyDockerLibrary">
+<arg>Network Crash Receive Test ${layer_tag}</arg>
+<arg>${True}</arg>
+<status status="PASS" start="2025-06-11T13:28:47.322396" elapsed="0.000152"/>
+</kw>
+<kw name="Stop Container" owner="MyDockerLibrary">
+<arg>${SUB_OK}</arg>
+<status status="PASS" start="2025-06-11T13:28:47.322645" elapsed="0.007400"/>
+</kw>
+<kw name="Stop Container" owner="MyDockerLibrary">
+<arg>${SUB_CRASH}</arg>
+<status status="PASS" start="2025-06-11T13:28:47.330174" elapsed="0.005757"/>
+</kw>
+<kw name="Stop Container" owner="MyDockerLibrary">
+<arg>${PUBLISHER}</arg>
+<status status="PASS" start="2025-06-11T13:28:47.336038" elapsed="0.005015"/>
+</kw>
+<arg>network_tcp</arg>
+<arg>network</arg>
+<status status="PASS" start="2025-06-11T13:28:16.098455" elapsed="31.242660"/>
+</kw>
+<tag>crash_receive_network_tcp</tag>
+<status status="PASS" start="2025-06-11T13:28:16.097982" elapsed="31.243228"/>
+</test>
+<status status="FAIL" start="2025-06-11T13:25:46.359578" elapsed="180.982758"/>
+</suite>
+<statistics>
+<total>
+<stat pass="4" fail="1" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0" skip="0">crash_receive_local_shm</stat>
+<stat pass="1" fail="0" skip="0">crash_receive_local_tcp</stat>
+<stat pass="1" fail="0" skip="0">crash_receive_network_tcp</stat>
+<stat pass="1" fail="0" skip="0">crash_receive_network_udp</stat>
+<stat pass="0" fail="1" skip="0">zero_copy_crash_receive_local_shm</stat>
+</tag>
+<suite>
+<stat name="Sub Send Crash" id="s1" pass="4" fail="1" skip="0">Sub Send Crash</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
