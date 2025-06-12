@@ -157,3 +157,26 @@ jobs:
         commit_message: "Deploy test report at ${{ env.REPORT_TS }}"
         allow_empty_commit: true
         keep_files: true
+
+    - name: Report status back to eCAL repo
+      if: always()
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.ECAL_PAT }}
+        script: |
+          const repo = context.payload.client_payload.repo;
+          const sha = context.payload.client_payload.sha;
+          const owner = repo.split('/')[0];
+          const name = repo.split('/')[1];
+
+          const state = '${{ job.status }}' === 'success' ? 'success' : 'failure';
+
+          await github.repos.createCommitStatus({
+            owner,
+            repo: name,
+            sha,
+            state,
+            context: 'ECAL Integration Tests',
+            description: state === 'success' ? 'Tests passed' : 'Tests failed',
+            target_url: `https://emirtutar.github.io/ECAL_Test_Framework/`
+          });
