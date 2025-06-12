@@ -164,19 +164,17 @@ jobs:
       with:
         github-token: ${{ secrets.ECAL_PAT }}
         script: |
-          const repo = context.payload.client_payload.repo;
-          const sha = context.payload.client_payload.sha;
-          const owner = repo.split('/')[0];
-          const name = repo.split('/')[1];
+          const { repo, sha } = context.payload.client_payload;
+          const [owner, name] = repo.split("/");
 
-          const state = '${{ job.status }}' === 'success' ? 'success' : 'failure';
-
-          await github.repos.createCommitStatus({
+          const result = await github.rest.repos.createCommitStatus({
             owner,
             repo: name,
-            sha,
-            state,
+            sha: sha,
+            state: '${{ job.status }}' === 'success' ? 'success' : 'failure',
             context: 'ECAL Integration Tests',
-            description: state === 'success' ? 'Tests passed' : 'Tests failed',
-            target_url: `https://emirtutar.github.io/ECAL_Test_Framework/`
+            description: '${{ job.status }}' === 'success' ? 'Tests passed' : 'Tests failed',
+            target_url: 'https://emirtutar.github.io/ECAL_Test_Framework/'
           });
+
+          console.log("Commit status set:", result.status);
