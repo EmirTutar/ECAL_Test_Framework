@@ -26,6 +26,10 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
+    
+    - name: Save Commit SHA (if provided)
+      run: |
+        echo "COMMIT_SHA=${{ github.event.client_payload.sha || '' }}" >> $GITHUB_ENV
 
     - name: Pull existing gh-pages branch into folder
       run: |
@@ -35,6 +39,11 @@ jobs:
       run: |
         echo "REPORT_TS=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV 
 
+    - name: Store Commit SHA in Report Folder
+      run: |
+        mkdir -p gh-pages/${REPORT_TS}
+        echo "${COMMIT_SHA}" > gh-pages/${REPORT_TS}/.commit
+    
     - name: Set up Docker
       uses: docker/setup-buildx-action@v3
 
@@ -93,8 +102,11 @@ jobs:
         echo "<h1>eCAL Integration Test Reports</h1>" >> $INDEX_FILE
 
         for folder in $(ls -1 gh-pages | grep -E '^[0-9]{4}-' | sort -r); do
+          COMMIT_FILE="gh-pages/$folder/.commit"
+          COMMIT_HASH=""
+          [[ -f "$COMMIT_FILE" ]] && COMMIT_HASH=$(cat "$COMMIT_FILE")
           echo "<details>" >> $INDEX_FILE
-          echo "<summary>Test Run: ${folder}</summary>" >> $INDEX_FILE
+          echo "<summary>Test Run: ${folder} (${COMMIT_HASH})</summary>" >> $INDEX_FILE
           echo "<ul>" >> $INDEX_FILE
           if [[ -d gh-pages/$folder/summary ]]; then
             echo "<li><b>Summary</b>: " >> $INDEX_FILE
