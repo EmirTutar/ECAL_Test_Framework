@@ -35,7 +35,7 @@ jobs:
     - name: Build ecal_base Image
       run: |
         docker build -t ecal_base -f integration_tests/docker/Dockerfile.ecal_base .
-    
+
     - name: Install Robot Framework + Docker SDK
       run: |
         python3 -m pip install --upgrade pip
@@ -44,71 +44,28 @@ jobs:
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$PWD/integration_tests/lib" >> $GITHUB_ENV
 
-    # Test 1: basic_pub_sub
-    - name: Run Test basic_pub_sub
+    - name: Run All Robot Tests Together
       run: |
-        cd integration_tests/basic_pub_sub
-        robot robottests/basic_pub_sub.robot || echo "Test failed"
+        set -e
+        mkdir -p integration_tests/results
+        robot \
+          --output integration_tests/results/output.xml \
+          --report integration_tests/results/report.html \
+          --log integration_tests/results/log.html \
+          integration_tests/**/robottests/*.robot
 
-    # Test 2: message_validation
-    - name: Run Test message_validation
-      run: |
-        cd integration_tests/message_validation
-        robot robottests/message_validation.robot || echo "Test failed"
-
-    # Test 3: multi_pub_sub
-    - name: Run Test multi_pub_sub
-      run: |
-        cd integration_tests/multi_pub_sub
-        robot robottests/multi_pub_sub.robot || echo "Test failed"
-
-    # Test 4: network_crash
-    - name: Run Test network_crash
-      run: |
-        cd integration_tests/network_crash
-        robot robottests/network_crash.robot || echo "Test failed"
-
-    # Test 5: pub_crash
-    - name: Run Test pub_crash
-      run: |
-        cd integration_tests/pub_crash
-        robot robottests/pub_crash.robot || echo "Test failed"
-
-    # Test 6: sub_crash
-    - name: Run Test sub_crash
-      run: |
-        cd integration_tests/sub_crash
-        robot robottests/sub_crash.robot || echo "Test failed"
-
-    # Test 7: sub_send_crash
-    - name: Run Test sub_send_crash
-      run: |
-        cd integration_tests/sub_send_crash
-        robot robottests/sub_send_crash.robot || echo "Test failed"
-
-    - name: Archive all Robot logs (for manual download only)
+    - name: Archive Robot logs (for manual download only)
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: robot-reports
-        path: |
-          integration_tests/**/log.html
-          integration_tests/**/output.xml
-          integration_tests/**/report.html
+        path: integration_tests/results/
 
-    - name: Copy only valid Robot Reports to gh-pages folder
+    - name: Copy Reports to gh-pages folder
       if: always()
       run: |
-        mkdir -p gh-pages/${REPORT_TS}
-        for dir in integration_tests/*; do
-          if [[ -f "$dir/log.html" || -f "$dir/report.html" || -f "$dir/output.xml" ]]; then
-            test_name=$(basename $dir)
-            mkdir -p gh-pages/${REPORT_TS}/${test_name}
-            cp $dir/log.html gh-pages/${REPORT_TS}/${test_name}/ || true
-            cp $dir/report.html gh-pages/${REPORT_TS}/${test_name}/ || true
-            cp $dir/output.xml gh-pages/${REPORT_TS}/${test_name}/ || true
-          fi
-        done
+        mkdir -p gh-pages/${REPORT_TS}/summary
+        cp integration_tests/results/* gh-pages/${REPORT_TS}/summary/
 
     - name: Generate index.html with Dropdowns
       if: always()
@@ -133,15 +90,13 @@ jobs:
           echo "<details>" >> $INDEX_FILE
           echo "<summary>Test Run: ${folder}</summary>" >> $INDEX_FILE
           echo "<ul>" >> $INDEX_FILE
-          for test in $(ls -1 gh-pages/$folder); do
-            if [[ -f "gh-pages/$folder/$test/log.html" || -f "gh-pages/$folder/$test/report.html" || -f "gh-pages/$folder/$test/output.xml" ]]; then
-              echo "<li><b>${test}</b>: " >> $INDEX_FILE
-              [[ -f "gh-pages/$folder/$test/log.html" ]] && echo "<a href='${folder}/${test}/log.html'>log</a> | " >> $INDEX_FILE
-              [[ -f "gh-pages/$folder/$test/report.html" ]] && echo "<a href='${folder}/${test}/report.html'>report</a> | " >> $INDEX_FILE
-              [[ -f "gh-pages/$folder/$test/output.xml" ]] && echo "<a href='${folder}/${test}/output.xml'>xml</a>" >> $INDEX_FILE
-              echo "</li>" >> $INDEX_FILE
-            fi
-          done
+          if [[ -d gh-pages/$folder/summary ]]; then
+            echo "<li><b>Summary</b>: " >> $INDEX_FILE
+            [[ -f "gh-pages/$folder/summary/log.html" ]] && echo "<a href='${folder}/summary/log.html'>log</a> | " >> $INDEX_FILE
+            [[ -f "gh-pages/$folder/summary/report.html" ]] && echo "<a href='${folder}/summary/report.html'>report</a> | " >> $INDEX_FILE
+            [[ -f "gh-pages/$folder/summary/output.xml" ]] && echo "<a href='${folder}/summary/output.xml'>xml</a>" >> $INDEX_FILE
+            echo "</li>" >> $INDEX_FILE
+          fi
           echo "</ul></details>" >> $INDEX_FILE
         done
 
@@ -167,14 +122,14 @@ jobs:
           const { repo, sha } = context.payload.client_payload;
           const [owner, name] = repo.split("/");
 
-          const result = await github.rest.repos.createCommitStatus({
+          const state = '${{ job.status }}' === 'success' ? 'success' : 'failure';
+
+          await github.rest.repos.createCommitStatus({
             owner,
             repo: name,
-            sha: sha,
-            state: '${{ job.status }}' === 'success' ? 'success' : 'failure',
+            sha,
+            state,
             context: 'ECAL Integration Tests',
-            description: '${{ job.status }}' === 'success' ? 'Tests passed' : 'Tests failed',
+            description: state === 'success' ? 'Tests passed' : 'Tests failed',
             target_url: 'https://emirtutar.github.io/ECAL_Test_Framework/'
           });
-
-          console.log("Commit status set:", result.status);
