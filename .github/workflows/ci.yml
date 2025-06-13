@@ -7,6 +7,10 @@ on:
     types: [run-tests]
   workflow_dispatch:
 
+concurrency:
+  group: gh-pages-deploy
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pages: write
