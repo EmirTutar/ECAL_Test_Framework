@@ -33,7 +33,7 @@ RUN git clone --recursive https://github.com/eclipse-ecal/ecal.git && \
     cd ecal && \
     git checkout ${ECAL_COMMIT} && \
     git submodule init && \
-    git submodule update && 
+    git submodule update
 
 WORKDIR /opt/ecal/_build
 
