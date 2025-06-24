@@ -48,6 +48,10 @@ jobs:
       run: |
         mkdir -p gh-pages/${REPORT_TS}
         echo "${COMMIT_SHA}" > gh-pages/${REPORT_TS}/.commit
+
+    - name: Store Repository URL in Report Folder
+      run: |
+        echo "${ECAL_REPO_URL}" > gh-pages/${REPORT_TS}/.repo
     
     - name: Set up Docker
       uses: docker/setup-buildx-action@v3
@@ -112,10 +116,14 @@ jobs:
 
         for folder in $(ls -1 gh-pages | grep -E '^[0-9]{4}-' | sort -r); do
           COMMIT_FILE="gh-pages/$folder/.commit"
+          REPO_FILE="gh-pages/$folder/.repo"
           COMMIT_HASH=""
+          REPO_URL=""
           [[ -f "$COMMIT_FILE" ]] && COMMIT_HASH=$(cat "$COMMIT_FILE")
+          [[ -f "$REPO_FILE" ]] && REPO_URL=$(cat "$REPO_FILE")
           echo "<details>" >> $INDEX_FILE
           echo "<summary>Test Run: ${folder} (${COMMIT_HASH})</summary>" >> $INDEX_FILE
+          [[ -n "$REPO_URL" ]] && echo "<div style='margin-top: 6px; font-size: 0.9em;'>Source: <a href='$REPO_URL' target='_blank'>$REPO_URL</a></div>" >> $INDEX_FILE
           echo "<ul>" >> $INDEX_FILE
           if [[ -d gh-pages/$folder/summary ]]; then
             echo "<li><b>Summary</b>: " >> $INDEX_FILE
