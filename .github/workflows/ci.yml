@@ -33,7 +33,7 @@ jobs:
       run: |
         REPO_URL="https://github.com/${{ github.event.client_payload.repo || 'eclipse-ecal/ecal' }}.git"
         echo "ECAL_REPO_URL=$REPO_URL" >> $GITHUB_ENV
-     
+          
     - name: Pull existing gh-pages branch into folder
       run: |
         git clone --branch gh-pages https://github.com/${{ github.repository }} gh-pages || mkdir gh-pages
@@ -147,7 +147,7 @@ jobs:
         keep_files: true
 
     - name: Report status back to eCAL repo
-      if: always()
+      if: always() && github.event_name == 'repository_dispatch'
       uses: actions/github-script@v6
       with:
         github-token: ${{ secrets.ECAL_PAT }}
