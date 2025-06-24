@@ -33,22 +33,7 @@ jobs:
       run: |
         REPO_URL="https://github.com/${{ github.event.client_payload.repo || 'eclipse-ecal/ecal' }}.git"
         echo "ECAL_REPO_URL=$REPO_URL" >> $GITHUB_ENV
-    
-    - name: Mark test as pending
-      uses: actions/github-script@v6
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          await github.rest.repos.createCommitStatus({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            sha: context.sha,
-            state: 'pending',
-            context: 'ECAL Integration Tests',
-            description: 'Tests are running...',
-            target_url: 'https://github.com/EmirTutar/ECAL_Test_Framework/actions'
-          });
-          
+     
     - name: Pull existing gh-pages branch into folder
       run: |
         git clone --branch gh-pages https://github.com/${{ github.repository }} gh-pages || mkdir gh-pages
