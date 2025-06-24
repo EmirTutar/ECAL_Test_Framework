@@ -24,12 +24,17 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.31.6/cmake-3.31.6
     rm cmake-3.31.6-linux-x86_64.sh
 RUN cmake --version
 
+#Default
+ARG ECAL_REPO_URL=https://github.com/eclipse-ecal/ecal.git
 ARG ECAL_COMMIT=master
+
+#Change URL or Commit hash (e.g. Forked repo URL or specific Commit hash to check)
+ENV ECAL_REPO_URL=${ECAL_REPO_URL}
 ENV ECAL_COMMIT=${ECAL_COMMIT}
 
-# Clone eCAL repository (official GitHub)
+# Clone eCAL repository
 WORKDIR /opt
-RUN git clone --recursive https://github.com/eclipse-ecal/ecal.git && \
+RUN git clone --recursive ${ECAL_REPO_URL} && \
     cd ecal && \
     git checkout ${ECAL_COMMIT} && \
     git submodule init && \

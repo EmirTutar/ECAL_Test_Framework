@@ -30,6 +30,11 @@ jobs:
     - name: Save Commit SHA (if provided)
       run: |
         echo "COMMIT_SHA=${{ github.event.client_payload.sha || 'master' }}" >> $GITHUB_ENV
+    
+    - name: Save Repository URL (if provided)
+      run: |
+        REPO_URL="https://github.com/${{ github.event.client_payload.repo || 'eclipse-ecal/ecal' }}.git"
+        echo "ECAL_REPO_URL=$REPO_URL" >> $GITHUB_ENV
 
     - name: Pull existing gh-pages branch into folder
       run: |
@@ -50,6 +55,7 @@ jobs:
     - name: Build ecal_base Image
       run: |
         docker build \
+          --build-arg ECAL_REPO_URL=${{ env.ECAL_REPO_URL }} \
           --build-arg ECAL_COMMIT=${{ env.COMMIT_SHA }} \
           -t ecal_base \
           -f integration_tests/docker/Dockerfile.ecal_base .
