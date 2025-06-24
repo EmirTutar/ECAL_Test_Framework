@@ -24,14 +24,20 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.31.6/cmake-3.31.6
     rm cmake-3.31.6-linux-x86_64.sh
 RUN cmake --version
 
+ARG ECAL_COMMIT=master
+ENV ECAL_COMMIT=${ECAL_COMMIT}
+
 # Clone eCAL repository (official GitHub)
 WORKDIR /opt
-RUN git clone --recursive https://github.com/eclipse-ecal/ecal.git
-WORKDIR /opt/ecal
-RUN git submodule init && \
-    git submodule update && \
-    mkdir -p _build && cd _build && \
-    cmake .. \
+RUN git clone --recursive https://github.com/eclipse-ecal/ecal.git && \
+    cd ecal && \
+    git checkout ${ECAL_COMMIT} && \
+    git submodule init && \
+    git submodule update && 
+
+WORKDIR /opt/ecal/_build
+
+RUN cmake .. \
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=cmake/submodule_dependencies.cmake \
       -DECAL_THIRDPARTY_BUILD_PROTOBUF=ON \

@@ -29,7 +29,7 @@ jobs:
     
     - name: Save Commit SHA (if provided)
       run: |
-        echo "COMMIT_SHA=${{ github.event.client_payload.sha || '' }}" >> $GITHUB_ENV
+        echo "COMMIT_SHA=${{ github.event.client_payload.sha || 'master' }}" >> $GITHUB_ENV
 
     - name: Pull existing gh-pages branch into folder
       run: |
