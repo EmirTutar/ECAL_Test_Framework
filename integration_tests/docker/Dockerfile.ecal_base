@@ -34,7 +34,7 @@ ENV ECAL_COMMIT=${ECAL_COMMIT}
 
 # Clone eCAL repository
 WORKDIR /opt
-RUN git clone --recursive ${ECAL_REPO_URL} && \
+RUN git clone ${ECAL_REPO_URL} && \
     cd ecal && \
     git checkout ${ECAL_COMMIT} && \
     git submodule init && \
