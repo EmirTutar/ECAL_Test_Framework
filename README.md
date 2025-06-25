@@ -60,8 +60,41 @@ Each run is timestamped and archived, with access to:
 Tests can be triggered in three ways:
 
 1. Manually via GitHub Actions
-2. Automatically from the main eCAL repository using `repository_dispatch`
-3. It is triggered with daily schedule (e.g., 05:00 UTC)
+2. Automatically from the eCAL repository using `repository_dispatch` (Create a PR or Push to Master)
+
+## Note for Forks
+
+If you are working on a fork of the official eCAL repository (e.g., UserName/ecal) and you create a pull request or push from develop to master within your fork, you need to allow GitHub Actions to trigger the integration tests in this repository.
+
+To do so, follow these steps:
+
+### 1. Create a Personal Access Token (PAT):
+1. Go to your GitHub Developer Settings → Personal Access Tokens.
+2. Click on “Generate new token (classic)”.
+3. Set a name like ECAL Test Trigger Token.
+4. Set an expiration (e.g., 90 days or custom).
+5. Under Scopes, enable:
+ - repo (for private forks)
+ 
+    or
+
+ - public_repo (for public forks only)
+
+6. Click Generate token and copy it immediately. You won't see it again.
+
+### 2. Add the Token to Your Forked eCAL Repository:
+1. Go to your forked repository on GitHub (e.g., UserName/ecal).
+2. Navigate to: Settings → Secrets and variables → Actions → New repository secret.
+3. Name the secret exactly:
+
+```bash
+TEST_FRAMEWORK_TOKEN
+```
+4. Paste the copied token as the value.
+5. Click Add secret.
+6. Once added, GitHub Actions in your fork can use this token to trigger the test framework via repository_dispatch.
+
+⚠️ This is only needed for forks. If you push or create PRs directly in eclipse-ecal/ecal, no token is required.
 
 ## Feedback to eCAL Repo
 
