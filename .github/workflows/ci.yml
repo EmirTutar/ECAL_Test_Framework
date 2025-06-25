@@ -27,13 +27,20 @@ jobs:
     
     - name: Save Commit SHA (if provided)
       run: |
-        echo "COMMIT_SHA=${{ github.event.client_payload.sha || 'master' }}" >> $GITHUB_ENV
+        if [[ -n "${{ github.event.client_payload.sha }}" ]]; then
+          echo "COMMIT_SHA=${{ github.event.client_payload.sha }}" >> $GITHUB_ENV
+        else
+          echo "COMMIT_SHA=master" >> $GITHUB_ENV
+        fi
     
     - name: Save Repository URL (if provided)
       run: |
-        REPO_URL="https://github.com/${{ github.event.client_payload.repo || 'eclipse-ecal/ecal' }}.git"
-        echo "ECAL_REPO_URL=$REPO_URL" >> $GITHUB_ENV
-          
+        if [[ -n "${{ github.event.client_payload.repo }}" ]]; then
+          echo "ECAL_REPO_URL=https://github.com/${{ github.event.client_payload.repo }}.git" >> $GITHUB_ENV
+        else
+          echo "ECAL_REPO_URL=https://github.com/eclipse-ecal/ecal.git" >> $GITHUB_ENV
+        fi
+
     - name: Pull existing gh-pages branch into folder
       run: |
         git clone --branch gh-pages https://github.com/${{ github.repository }} gh-pages || mkdir gh-pages
