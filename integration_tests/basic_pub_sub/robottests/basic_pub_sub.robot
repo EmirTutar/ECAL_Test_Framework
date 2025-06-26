@@ -97,6 +97,7 @@ Run Network Pub Sub Test
     ${log_pub}=    Get Container Logs    ${PUB_NAME}
 
     Log To Console    \n[CONTAINER LOG: SUBSCRIBER]\n${log_sub}
+    Log               \n[CONTAINER LOG: SUBSCRIBER]\n${log_sub}
     Log To Console    \n[CONTAINER LOG: PUBLISHER]\n${log_pub}
 
     Log Test Summary    Basic Pub/Sub Network ${layer_tag}    ${True}

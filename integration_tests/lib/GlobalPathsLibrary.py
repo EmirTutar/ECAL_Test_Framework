@@ -14,14 +14,21 @@ class GlobalPathsLibrary:
     @keyword
     def set_test_context(self, test_case_folder: str, tag_prefix: str):
         """
-        Sets the test folder (e.g. basic_pub_sub or message_validation) and tag prefix (e.g. basic_pub_sub).
-        Should be called once in Suite Setup if you're using non-default test cases.
+        Sets the test folder and tag prefix if it's a valid test case.
+        The folder must exist under integration_tests/ and contain typical test structure.
         """
-        if test_case_folder in ["basic_pub_sub","sub_send_crash", "multi_pub_sub", "pub_crash", "sub_crash", "network_crash", "message_validation"]:
+        test_case_path = os.path.join(self.integration_tests_root, test_case_folder)
+
+        # Check if it exists and contains a 'robottests' folder
+        has_robot = os.path.isdir(os.path.join(test_case_path, "robottests"))
+        has_src = os.path.isdir(os.path.join(test_case_path, "src"))
+        has_scripts = os.path.isdir(os.path.join(test_case_path, "scripts"))
+
+        if os.path.isdir(test_case_path) and (has_robot or has_src or has_scripts):
             self.test_case_folder = test_case_folder
             self.tag_prefix = tag_prefix
         else:
-            raise ValueError(f"Unknown test case folder: {test_case_folder}")
+            raise ValueError(f"'{test_case_folder}' is not a valid test case folder.")
 
     @keyword
     def get_project_root(self):

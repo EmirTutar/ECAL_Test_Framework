@@ -91,6 +91,9 @@ Run Network Crash Survival Test
     ${log_local}=    Get Container Logs    ${LOCAL_ALL}
     Log To Console    \n[LOG: LOCAL UDP PUB + SUB + PUB3 CONTAINER]\n${log_local}
 
+    Log    \n[LOG: LOCAL UDP PUB + SUB + PUB3 CONTAINER]\n${log_local}
+    #Kann ich locall all aus container log speichern und es mit log ausgeben?
+
     ${exit_code}=    Wait For Container Exit    ${LOCAL_ALL}
     Should Be Equal As Integers    ${exit_code}    0    LOCAL container (PUB + SUB + PUB3) failed unexpectedly!
     Log Test Summary    Network Crash Test with Local Recovery Publisher    ${True}
