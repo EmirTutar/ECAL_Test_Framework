@@ -1,6 +1,6 @@
-# eCAL Test Framework
+# eCAL integration Tests
 
-This repository contains an automated integration test framework for [eCAL](https://github.com/eclipse-ecal/ecall). It is designed to run and validate communication scenarios between multiple processes using eCAL middleware.
+This repository contains automated integration tests for [eCAL](https://github.com/eclipse-ecal/ecall). It is designed to run and validate communication scenarios between multiple processes using eCAL middleware.
 
 - View status and logs of last tests:
 
@@ -126,10 +126,3 @@ integration_tests/
 To create a new test case folder automatically, use the generator in `create_new_test/`.
 
 See: [create_new_test/README.md](create_new_test/README.md)
-
-## License
-eCAL Test Framework is licensed under Apache License 2.0. You are free to
-
-- Use eCAL Test Framework commercially
-- Modify eCAL Test Framework
-- Distribute eCAL Test Framework
