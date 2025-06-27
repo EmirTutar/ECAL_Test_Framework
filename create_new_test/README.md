@@ -40,12 +40,11 @@ python create_test.py my_test_case
 This creates a new folder:
 
 ```bash
-../integration_tests/my_test_case/
+/integration_tests/my_test_case/
 ```
 
 ## Notes
 
-1. All files include example content with comments:
-test_pub.cpp.j2 → becomes my_test_case_pub.cpp
+1. All files include example content with comments
 
 2. You can change the templates in templates/ folder

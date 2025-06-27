@@ -34,15 +34,14 @@ The main goal of this project is to provide:
 
 Each test case is implemented using [Robot Framework](https://robotframework.org/), with Docker-based isolation.
 
-Available scenarios include:
-
-* `basic_pub_sub`
-* `multi_pub_sub`
-* `network_crash`
-* `pub_crash`
-* `sub_crash`
-* `sub_send_crash`
-* and more...
+| Test Case         | Description                                   | README                        |
+|-------------------|-----------------------------------------------|-------------------------------|
+| basic_pub_sub     | Simple 1:1 publisher-subscriber communication | [README](integration_tests/basic_pub_sub/README.md) |
+| multi_pub_sub     | Multiple publishers and subscribers (N:N)     | [README](integration_tests/multi_pub_sub/README.md) |
+| network_crash     | Local UDP works after network disconnect      | [README](integration_tests/network_crash/README.md) |
+| pub_crash         | One publisher crashes mid-test                | [README](integration_tests/pub_crash/README.md) |
+| sub_crash         | Subscriber crashes during message receive     | [README](integration_tests/sub_crash/README.md) |
+| sub_send_crash    | Subscriber crashes during send/zero-copy test | [README](integration_tests/sub_send_crash/README.md) |
 
 ## Test Reports
 
@@ -98,7 +97,7 @@ TEST_FRAMEWORK_TOKEN
 
 ## Feedback to eCAL Repo
 
-After the test run finishes, the result (pass/fail) is reported back to the original commit in the eCAL repository as a commit status.
+After the test run finishes, the result (pass/fail) is reported back to the Pull Request in the eCAL repository as a commit status.
 
 ## Requirements
 
@@ -121,6 +120,12 @@ integration_tests/
   └── docker/
         └── Dockerfile.ecal_base
 ```
+
+## Creating New Tests
+
+To create a new test case folder automatically, use the generator in `create_new_test/`.
+
+See: [create_new_test/README.md](create_new_test/README.md)
 
 ## License
 eCAL Test Framework is licensed under Apache License 2.0. You are free to
