@@ -10,6 +10,48 @@ This repository contains automated integration tests for [eCAL](https://github.c
     
     https://emirtutar.github.io/ECAL_Test_Framework/
 
+## Table of Contents
+
+1. [Introduction](#ecal-integration-tests)
+   - [Project Overview](#ecal-integration-tests)
+   - [Test Status and Report Links](#ecal-integration-tests)
+
+2. [Purpose](#purpose)
+   - [Goals of the Project](#purpose)
+
+3. [Features](#features)
+   - [Supported Transport Layers](#features)
+   - [Covered Scenarios](#features)
+   - [Reporting and Integration](#features)
+
+4. [Test Scenarios](#test-scenarios)
+   - [Overview of Test Cases](#test-scenarios)
+   - [Individual Test Descriptions with README Links](#test-scenarios)
+
+5. [Test Reports](#test-reports)
+   - [GitHub Pages Output](#test-reports)
+   - [Report Artifacts](#test-reports)
+
+6. [Triggering Tests](#triggering-tests)
+   - [Manual Triggers](#triggering-tests)
+   - [Automatic Dispatch from eCAL Repository](#triggering-tests)
+
+7. [Note for Forks](#note-for-forks)
+   - [Creating a Personal Access Token (PAT)](#1-create-a-personal-access-token-pat)
+   - [Adding the Token to a Forked Repository](#2-add-the-token-to-your-forked-ecal-repository)
+
+8. [Feedback to eCAL Repo](#feedback-to-ecal-repo)
+
+9. [Requirements](#requirements)
+
+10. [Structure](#structure)
+
+11. [Local Development with VS Code](#local-development-with-vs-code)
+    - [Using Dev Containers to Avoid Header Errors](#local-development-with-vs-code)
+    - [Setup Instructions](#local-development-with-vs-code)
+
+12. [Creating New Tests](#creating-new-tests)
+
 ## Purpose
 
 The main goal of this project is to provide:
@@ -120,6 +162,22 @@ integration_tests/
   └── docker/
         └── Dockerfile.ecal_base
 ```
+
+## Local Development with VS Code
+
+If you want to develop and run the tests locally in VS Code **without getting header errors (e.g. eCAL or TCLAP not found)**, we recommend using the included `.devcontainer` setup.
+
+### Steps:
+
+1. Make sure Docker and VS Code are installed.
+2. Install the **Dev Containers extension** in VS Code.
+3. Open this repository in VS Code.
+4. When prompted, click **"Reopen in Container"**.
+5. VS Code will build and open a full-featured development environment inside Docker.
+
+This container is based on the same Docker image used for testing, so **all dependencies like eCAL and TCLAP are pre-installed**. You can develop and run Robot Framework tests directly without needing to configure anything on your host system.
+
+For more details, see: [.devcontainer/README.md](.devcontainer/README.md)
 
 ## Creating New Tests
 
