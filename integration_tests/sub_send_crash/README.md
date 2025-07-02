@@ -1,58 +1,79 @@
-# sub_send_crash – Crash During Reception Test
+# Subscriber Crash During Message Reception
 
-## Overview
+## Objective
 
-This test case evaluates the robustness of the eCAL system when a subscriber crashes while receiving a large message. It verifies whether other subscribers and the publisher remain unaffected.
+This test verifies that **other components remain stable** even if one subscriber crashes while receiving a large message.
 
-It also includes a variant that uses Shared Memory (SHM) transport with Zero-Copy enabled, a performance-critical feature for high-throughput systems.
-
----
-
-## Test Objective
-
-- Validate that the system remains stable when one subscriber crashes during message reception.
-- Assess how the system behaves under large message loads (e.g., 50MB–1GB).
-- Verify the effectiveness of Zero-Copy Shared Memory under fault conditions.
+It simulates stress and failure scenarios in **high-throughput** conditions, including **Shared Memory with Zero-Copy**.
 
 ---
 
-## Test Scenario
+## Test Setup
 
-1. A `large_publisher` sends large messages (default: 50MB).
-2. A `crash_subscriber` receives a few messages and then crashes during callback.
-3. A `test_subscriber` runs normally and must complete successfully.
-4. In the `zero_copy` variant:
-   - The publisher uses `zero_copy_mode = true` in SHM.
-   - All binaries are executed inside one container for local SHM tests.
-5. In `network_*` modes, each binary is run in a separate container.
-6. In `local_*` modes, each binary is run in one container.
+### Participants
+
+| Component          | Role                     | Notes                                   |
+|--------------------|--------------------------|-----------------------------------------|
+| `large_publisher`  | Publishes large messages | ~50MB per message                       |
+| `crash_subscriber` | Crashes during reception | Simulates failure 2s after first message|
+| `test_subscriber`  | Receives all messages    | Must remain stable and succeed          |
+
+### Variants
+
+- **Standard SHM, UDP, TCP**
+- **SHM with Zero-Copy enabled** (experimental)
+- **Network UDP, TCP**
+
+Note: UDP Local mode is skipped due to message size limits.
 
 ---
 
 ## Success Criteria
 
-- The `test_subscriber` receives all messages and exits with status code `0`.
-- The `crash_subscriber` crashes during reception (intentionally).
-- The `large_publisher` is not blocked by the crash and completes transmission.
-- In `zero_copy` mode, eCAL's memory sharing mechanism should function correctly even when a subscriber crashes while holding the shared memory segment.
+- `test_subscriber` receives at least 3 messages and exits with code `0`.
+- `crash_subscriber` terminates due to simulated crash.
+- `large_publisher` continues unaffected.
+- In SHM Zero-Copy: publisher/subscriber behavior is stable unless known eCAL limitations occur.
 
 ---
 
-## Transport Layer Notes
+## Known Issues
 
-| Transport Mode     | Status        | Notes                                                                 |
-|--------------------|---------------|-----------------------------------------------------------------------|
-| `local_shm`        | ✅ Tested      | Fails if `zero_copy` is enabled                                      |
-| `local_udp`        | ❌ Skipped     | UDP cannot transmit large messages , not suited for this test        |
-| `local_tcp`        | ✅ Tested      | Works                                                                |
-| `network_udp`      | ✅ Tested      | Works                                                                |
-| `network_tcp`      | ✅ Tested      | Works                                                                |
+- **Zero-Copy SHM mode**: test failes because of SHM with zero copy mode, which is a known issue in the current implementation. (test is commented out by default).
+- UDP local cannot handle 50MB messages.
 
 ---
 
-## Running the Test
+## Folder Structure
 
-Run all test cases:
+```
+sub_send_crash/
+├── robottests/
+│   └── sub_send_crash.robot
+├── src/
+│   ├── crash_send_subscriber.cpp
+│   ├── large_publisher.cpp
+│   ├── test_subscriber.cpp
+│   ├── zero_copy_pub.cpp
+│   └── CMakeLists.txt
+├── scripts/
+│   ├── build_images.sh
+│   └── entrypoint.sh
+├── docker/
+│   └── Dockerfile
+└── README.txt
+```
+
+---
+
+## Run the Test
 
 ```bash
 robot robottests/sub_send_crash.robot
+```
+
+---
+
+## Why It Matters
+
+Testing crash scenarios during large message reception helps ensure system **robustness** and **fault tolerance** in real-world high-throughput communication.
