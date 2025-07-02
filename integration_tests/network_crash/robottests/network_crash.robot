@@ -54,7 +54,10 @@ Init Test Context
     ${args}=     Get Build Script Args
     Set Suite Variable    ${BUILD_SCRIPT}    ${build}
     Set Suite Variable    ${NETWORK}         ${net}
-
+    
+    ${desc}=    Get Test Description
+    Log         ${desc}
+    
     Log To Console    [SETUP] Building image...
     ${result}=    Run Process    ${BUILD_SCRIPT}    @{args}
     Should Be Equal As Integers    ${result.rc}    0    Docker image build failed!
@@ -82,14 +85,20 @@ Run Network Crash Survival Test
     Log To Console    \n[INFO] Letting PUB1 and PUB2 run in parallel for 7s...
     Sleep    7s
 
-    Log To Console    \n[SIMULATION] Disconnecting NETWORK UDP Publisher...
-    #${log_net}=    Get Container Logs    ${NET_PUB}
+    Log To Console    \n[SIMULATION] Disconnecting NETWORK UDP Publisher..
+    
+    ${log_net}=    Get Container Logs    ${NET_PUB}
     #Log To Console    \n[LOG: NETWORK UDP PUB2 CONTAINER]\n${log_net}
+    Log    \n[LOG: NETWORK UDP PUB2 CONTAINER]\n${log_net}
+    
     Disconnect Container From Network    ${NET_PUB}    ${NETWORK}
-
-    Wait For Container Exit    ${LOCAL_ALL}
+    
+    Sleep    33s
     ${log_local}=    Get Container Logs    ${LOCAL_ALL}
     Log To Console    \n[LOG: LOCAL UDP PUB + SUB + PUB3 CONTAINER]\n${log_local}
+    Log    \n[LOG: LOCAL UDP PUB + SUB + PUB3 CONTAINER]\n${log_local}
+
+    Wait For Container Exit    ${LOCAL_ALL}
 
     ${exit_code}=    Wait For Container Exit    ${LOCAL_ALL}
     Should Be Equal As Integers    ${exit_code}    0    LOCAL container (PUB + SUB + PUB3) failed unexpectedly!

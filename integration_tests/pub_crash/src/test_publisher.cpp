@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<std::string> mode_arg("m", "mode", "Transport mode (e.g., network_udp)", true, "", "string");
     TCLAP::ValueArg<std::string> topic_arg("t", "topic", "Topic name", false, "test_topic", "string");
     TCLAP::ValueArg<std::string> name_arg("n", "name", "eCAL node name", false, "test_publisher", "string");
-    TCLAP::ValueArg<int> count_arg("c", "count", "Number of messages to send", false, 30, "int");
+    TCLAP::ValueArg<int> count_arg("c", "count", "Number of messages to send", false, 25, "int");
     TCLAP::ValueArg<int> delay_arg("d", "delay", "Delay between sends in milliseconds", false, 1000, "int");
 
     cmd.add(mode_arg);

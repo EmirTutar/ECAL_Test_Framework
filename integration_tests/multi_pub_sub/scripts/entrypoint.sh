@@ -28,37 +28,40 @@ elif [ "$ROLE" = "multi_subscriber" ]; then
   echo "[Entrypoint] Starting multi_subscriber in mode $MODE"
   ARGS="--mode $MODE --topic $TOPIC"
   ./multi_subscriber $ARGS $EXTRA
+  sleep 1
 
 elif [ "$ROLE" = "multi_subscriber2" ]; then
   echo "[Entrypoint] Starting multi_subscriber2 in mode $MODE"
   ARGS="--mode $MODE --topic $TOPIC"
   ./multi_subscriber2 $ARGS $EXTRA
+  sleep 1
 
 elif [ "$ROLE" = "local_multi" ]; then
   echo "[Entrypoint] Starting local multi pub/sub test in mode $MODE"
 
   ARGS="--mode $MODE --topic $TOPIC"
 
+  ./multi_publisher $ARGS &
+  PUB1_PID=$!
+
+  ./multi_publisher2 $ARGS &
+  PUB2_PID=$!
+  sleep 1
+  
   ./multi_subscriber $ARGS &
   SUB1_PID=$!
 
   ./multi_subscriber2 $ARGS &
   SUB2_PID=$!
 
-  ./multi_publisher $ARGS &
-  PUB1_PID=$!
-
-  ./multi_publisher2 $ARGS &
-  PUB2_PID=$!
+  wait $PUB1_PID
+  wait $PUB2_PID
 
   wait $SUB1_PID
   SUB1_CODE=$?
 
   wait $SUB2_PID
   SUB2_CODE=$?
-
-  wait $PUB1_PID
-  wait $PUB2_PID
 
   if [[ $SUB1_CODE -ne 0 || $SUB2_CODE -ne 0 ]]; then
     echo "[Entrypoint] One or more subscribers failed!"

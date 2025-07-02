@@ -56,6 +56,9 @@ Init Test Context
     Set Suite Variable    ${BUILD_SCRIPT}   ${build}
     Set Suite Variable    ${NETWORK}        ${net}
 
+    ${desc}=    Get Test Description
+    Log         ${desc}
+    
     Log To Console    [SETUP] Building Docker image...
     ${result}=        Run Process    ${BUILD_SCRIPT}    @{args}
     Should Be Equal As Integers    ${result.rc}    0    Docker build failed!
@@ -87,9 +90,11 @@ Run Network Communication Test
 
     ${test_sub_logs}=    Get Container Logs    ${TEST_SUB}
     Log To Console        \n[SUBSCRIBER CONTAINER OUTPUT]\n${test_sub_logs}
+    Log       \n[SUBSCRIBER CONTAINER OUTPUT]\n${test_sub_logs}
 
     ${crash_sub_logs}=    Get Container Logs    ${CRASH_SUB}
     Log To Console        \n[CRASH SUBSCRIBER CONTAINER OUTPUT]\n${crash_sub_logs}
+    Log        \n[CRASH SUBSCRIBER CONTAINER OUTPUT]\n${crash_sub_logs}
 
     #${monitor_logs}=      Get Container Logs    ${MONITOR_NAME}
     #Log To Console        \n[MONITOR CONTAINER OUTPUT]\n${monitor_logs}

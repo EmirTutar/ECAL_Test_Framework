@@ -24,17 +24,21 @@ elif [ "$ROLE" = "test_subscriber" ]; then
   echo "[Entrypoint] Starting stable subscriber in mode $MODE"
   ./test_subscriber $ARGS $EXTRA
   sleep 1
+  
 elif [ "$ROLE" = "crash_subscriber" ]; then
   echo "[Entrypoint] Starting crashing subscriber in mode $MODE"
   ./crash_send_subscriber $ARGS $EXTRA
   sleep 1
+
 elif [ "$ROLE" = "local_all" ]; then
   echo "[Entrypoint] Starting all processes locally in one container (mode $MODE)"
   ./large_publisher $ARGS &
   PUB_PID=$!
   sleep 1
+
   ./test_subscriber $ARGS &
   STABLE_PID=$!
+
   ./crash_send_subscriber $ARGS &
   CRASH_PID=$!
 

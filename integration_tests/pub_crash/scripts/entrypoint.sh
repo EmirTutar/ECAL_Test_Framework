@@ -25,6 +25,7 @@ elif [ "$ROLE" = "subscriber" ]; then
   echo "[Entrypoint] Starting crash subscriber in mode $MODE"
   ARGS="--mode $MODE --topic $TOPIC"
   ./test_subscriber $ARGS $EXTRA
+  sleep 1
 
 elif [ "$ROLE" = "monitor" ]; then
   echo "[Entrypoint] Starting monitoring process in mode $MODE"
@@ -41,17 +42,16 @@ elif [ "$ROLE" = "local_all" ]; then
 
   ARGS="--mode $MODE --topic $TOPIC"
 
-  ./test_subscriber $ARGS &
-  SUB_PID=$!
-
   ./crash_publisher $ARGS &
   CRASH_PUB_PID=$!
 
   ./test_publisher $ARGS &
   TEST_PUB_PID=$!
+  sleep 1
 
-  wait $TEST_PUB_PID
-  wait $CRASH_PUB_PID
+  ./test_subscriber $ARGS &
+  SUB_PID=$!
+
   wait $SUB_PID
 
 else

@@ -48,6 +48,9 @@ Init Test Context
     Set Suite Variable    ${BUILD_SCRIPT}   ${build}
     Set Suite Variable    ${NETWORK}        ${net}
 
+    ${desc}=    Get Test Description
+    Log         ${desc}
+
     Log To Console    [SETUP] Building Docker image...
     ${result}=        Run Process    ${BUILD_SCRIPT}    @{args}
     Should Be Equal As Integers    ${result.rc}    0    Docker build failed!
@@ -70,16 +73,21 @@ Run Network Communication Test
     Start Container    ${CRASH_PUB}   ${IMAGE}    crash_publisher     ${layer_tag}    ${TOPIC}  network=${NETWORK}
     Start Container    ${TEST_PUB}    ${IMAGE}    test_publisher    ${layer_tag}    ${TOPIC}    ${TEST_PUB}    network=${NETWORK}
 
+    Sleep    35s
+    
+    ${sub_logs}=        Get Container Logs    ${SUB_NAME}
+    Log To Console      \n[SUBSCRIBER CONTAINER OUTPUT]\n${sub_logs}
+    Log      \n[SUBSCRIBER CONTAINER OUTPUT]\n${sub_logs}
+
+    ${crash_logs}=      Get Container Logs    ${CRASH_PUB}
+    Log To Console      \n[CRASH PUBLISHER OUTPUT]\n${crash_logs}
+    Log       \n[CRASH PUBLISHER OUTPUT]\n${crash_logs}
+
     Wait For Container Exit    ${SUB_NAME}
     Wait For Container Exit    ${CRASH_PUB}
     Wait For Container Exit    ${TEST_PUB}
     #Wait For Container Exit    ${MONITOR_NAME}
 
-    ${sub_logs}=        Get Container Logs    ${SUB_NAME}
-    Log To Console      \n[SUBSCRIBER CONTAINER OUTPUT]\n${sub_logs}
-
-    ${crash_logs}=      Get Container Logs    ${CRASH_PUB}
-    Log To Console      \n[CRASH PUBLISHER OUTPUT]\n${crash_logs}
 
     #${monitor_logs}=    Get Container Logs    ${MONITOR_NAME}
     #Log To Console      \n[MONITOR CONTAINER OUTPUT]\n${monitor_logs}
@@ -104,11 +112,14 @@ Run Local Communication Test
 
     Start Container    ${CONTAINER}    ${IMAGE}    local_all    ${layer_tag}
 
-    ${exit_code}=    Wait For Container Exit    ${CONTAINER}
-    Should Be Equal As Integers    ${exit_code}    0    Local test failed!
+    Sleep    35s
 
     ${logs}=    Get Container Logs    ${CONTAINER}
     Log To Console    \n\n[CONTAINER LOG: LOCAL PUB+SUB]\n\n${logs}
+    Log   \n\n[CONTAINER LOG: LOCAL PUB+SUB]\n\n${logs}
+
+    ${exit_code}=    Wait For Container Exit    ${CONTAINER}
+    Should Be Equal As Integers    ${exit_code}    0    Local test failed!
 
     Log Test Summary    Local Communication after one Publisher crash ${layer_tag}    ${True}
     Stop Container    ${CONTAINER}

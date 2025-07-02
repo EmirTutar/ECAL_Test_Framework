@@ -12,8 +12,8 @@ int main(int argc, char* argv[])
 
     TCLAP::ValueArg<std::string> mode_arg("m", "mode", "Transport mode", true, "", "string");
     TCLAP::ValueArg<std::string> topic_arg("t", "topic", "Topic name", false, "test_topic", "string");
-    TCLAP::ValueArg<int> total_arg("c", "count", "Total messages", false, 30, "int");
-    TCLAP::ValueArg<int> crash_at_arg("", "crash_at", "Crash after N messages", false, 10, "int");
+    TCLAP::ValueArg<int> total_arg("c", "count", "Total messages", false, 25, "int");
+    TCLAP::ValueArg<int> crash_at_arg("", "crash_at", "Crash after N messages", false, 7, "int");
 
     cmd.add(mode_arg);
     cmd.add(topic_arg);

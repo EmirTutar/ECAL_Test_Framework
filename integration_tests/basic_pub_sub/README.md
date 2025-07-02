@@ -1,38 +1,76 @@
-# Basic Publisher/Subscriber Test (basic_pub_sub)
+# Basic Pub/Sub Test
 
-## Description
+## Objective
 
-This test verifies the basic functionality of the eCAL communication system using one publisher and one subscriber.
+This test verifies basic communication in eCAL between a single publisher and a single subscriber.
 
-## Scenario
+It focuses on message delivery over all five supported eCAL transport layers.
 
-- One publisher sends simple binary messages (e.g., a buffer filled with `42`).
-- One subscriber listens to the same topic and checks if it receives the messages.
+---
 
-## Test Objective
+## Test Setup
 
-Confirm that a subscriber receives messages from a single publisher.
+### Components
 
-Test this in **all 5 eCAL modes**:
-- `local_shm`
-- `local_udp`
-- `local_tcp`
-- `network_udp`
-- `network_tcp`
+| Component     | Role         | Mode       | Message Count | Message Size |
+|---------------|--------------|------------|----------------|----------------|
+| Publisher     | Sender       | All Modes  | 4 messages     | 0.2 MB         |
+| Subscriber    | Receiver     | All Modes  | Receives 4     | 0.2 MB         |
 
-## Success Criteria
+### Communication
 
-- The subscriber prints how many messages it received.
-- If at least one message was received, the subscriber exits with code `0`.
-- The `.robot` test passes if the subscriber exits successfully.
+```
++-------------+          +--------------+
+|  Publisher  |  --->    |  Subscriber  |
++-------------+          +--------------+
+         Sends 4 × 0.2MB messages
+```
 
-## Structure
+---
 
-- `publisher.cpp`: Sends a fixed number of messages on the topic.
-- `subscriber.cpp`: Receives the messages and validates reception.
-- `basic_pub_sub.robot`: Robot Framework test that runs this scenario in all transport modes.
+## Test Flow
+
+1. The publisher sends 4 messages (0.2 MB each) on one topic.
+2. The subscriber listens for 6 seconds.
+3. It counts the messages received.
+4. If it received exactly 4, it exits with code 0.
+5. Otherwise, it exits with code 1.
+
+---
+
+## Pass Criteria
+
+- Subscriber receives all 4 messages  
+- Clean exit (code 0)
+
+---
+
+## Folder Structure
+
+```
+basic_pub_sub/
+├── scripts/
+│   ├── build_images.sh
+│   └── entrypoint.sh
+├── src/
+│   ├── one_publisher.cpp
+│   └── one_subscriber.cpp
+├── robottests/
+│   └── basic_pub_sub.robot
+├── Dockerfile
+└── README.txt
+```
+
+---
+
+## Run the Test
+
+```bash
+robot robottests/basic_pub_sub.robot
+```
+
+---
 
 ## Notes
 
-- This test is ideal for verifying core communication between components before moving to more complex tests.
-- For real-world testing, this basic pattern helps detect network configuration or transport layer issues.
+- This test helps validate buffer sizes and basic transmission logic in all modes.

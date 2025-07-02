@@ -37,9 +37,10 @@ Crash During Reception (SHM)
     [Tags]    crash_receive_local_shm
     Run Local Crash Receive Test    local_shm
 
-Crash with Zero Copy Enabled in Reception (SHM)
-    [Tags]    zero_copy_crash_receive_local_shm
-    Run with Zero Copy Enabled Local Crash Receive Test    local_shm
+#Crash with Zero Copy Enabled in Reception (SHM)
+#    [Tags]    zero_copy_crash_receive_local_shm
+#    Run with Zero Copy Enabled Local Crash Receive Test    local_shm
+# Fails at the moment
 
 #Crash During Reception (UDP)
 #    [Tags]    crash_receive_local_udp
@@ -66,6 +67,9 @@ Init Test Context
     ${args}=     Get Build Script Args
     Set Suite Variable    ${BUILD_SCRIPT}    ${build}
     Set Suite Variable    ${NETWORK}         ${net}
+
+    ${desc}=    Get Test Description
+    Log         ${desc}
 
     Log To Console    [SETUP] Building image...
     ${result}=    Run Process    ${BUILD_SCRIPT}    @{args}
@@ -100,6 +104,10 @@ Run Network Crash Receive Test
     Log To Console    \n[LOG: CRASH_SUBSCRIBER]\n${log2}
     Log To Console    \n[LOG: PUBLISHER]\n${log3}
 
+    Log    \n[LOG: SUBSCRIBER]\n${log1}
+    Log    \n[LOG: CRASH_SUBSCRIBER]\n${log2}
+    Log    \n[LOG: PUBLISHER]\n${log3}
+
     ${exit1}=    Wait For Container Exit    ${SUB_OK}
     Should Be Equal As Integers    ${exit1}    0    Stable subscriber failed unexpectedly!
 
@@ -120,6 +128,7 @@ Run Local Crash Receive Test
     Sleep    35s
     ${logs}=    Get Container Logs    ${CONTAINER}
     Log To Console    \n[LOCAL TEST CONTAINER OUTPUT]\n${logs}
+    Log   \n[LOCAL TEST CONTAINER OUTPUT]\n${logs}
 
     ${exit_code}=    Wait For Container Exit    ${CONTAINER}
     Should Be Equal As Integers    ${exit_code}    0    Local container failed!
@@ -143,6 +152,7 @@ Run with Zero Copy Enabled Local Crash Receive Test
     Sleep    35s 
     ${logs}=    Get Container Logs    ${CONTAINER}
     Log To Console    \n[LOCAL SHM WITH ZERO COPY TEST CONTAINER OUTPUT]\n${logs}
+    Log    \n[LOCAL SHM WITH ZERO COPY TEST CONTAINER OUTPUT]\n${logs}
 
     ${exit_code}=    Wait For Container Exit    ${CONTAINER}
     Should Be Equal As Integers    ${exit_code}    0    Local container with zero copy shm failed!

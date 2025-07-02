@@ -25,12 +25,17 @@ if [ "$ROLE" = "publisher" ]; then
 elif [ "$ROLE" = "subscriber" ]; then
   echo "[Entrypoint] Starting subscriber in mode $MODE"
   ./one_subscriber $ARGS $EXTRA
+  sleep 1
 
 elif [ "$ROLE" = "local" ]; then
   echo "[Entrypoint] Starting subscriber and publisher in mode $MODE"
+  ./one_publisher -m "$MODE" &
+  PUB_PID=$!
+  sleep 1
+
   ./one_subscriber -m "$MODE" &
   SUB_PID=$!
-  ./one_publisher -m "$MODE"
+
   wait $SUB_PID
 
 else
