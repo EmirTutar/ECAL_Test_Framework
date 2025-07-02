@@ -53,3 +53,28 @@ class GlobalPathsLibrary:
     @keyword
     def get_network_name(self):
         return "ecal_test_net"
+    
+    @keyword
+    def get_test_description(self):
+        """
+        Reads the *** Comments *** section from the .robot file and returns it as a string.
+        """
+        robot_file = os.path.join(self.integration_tests_root, self.test_case_folder, "robottests", f"{self.test_case_folder}.robot")
+        if not os.path.exists(robot_file):
+            return f"[Error] .robot file not found: {robot_file}"
+
+        in_comments = False
+        description_lines = []
+
+        with open(robot_file, "r", encoding="utf-8") as file:
+            for line in file:
+                stripped = line.strip()
+                if stripped.startswith("*** Comments ***"):
+                    in_comments = True
+                    continue
+                if stripped.startswith("***") and in_comments:
+                    break
+                if in_comments:
+                    description_lines.append(stripped)
+
+        return "\n".join(description_lines).strip() if description_lines else "[No description found]"

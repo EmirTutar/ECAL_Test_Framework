@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<std::string> mode_arg("m", "mode", "Transport mode", true, "", "string");
     TCLAP::ValueArg<std::string> topic_arg("t", "topic", "Topic name", false, "test_topic", "string");
     TCLAP::ValueArg<std::string> name_arg("n", "name", "eCAL node name", false, "sub_test", "string");
-    TCLAP::ValueArg<int> timeout_arg("w", "wait", "Wait duration (seconds)", false, 5, "int");
+    TCLAP::ValueArg<int> timeout_arg("w", "wait", "Wait duration (seconds)", false, 6, "int");
 
     cmd.add(mode_arg);
     cmd.add(topic_arg);
@@ -34,17 +34,17 @@ int main(int argc, char* argv[])
 
     eCAL::CSubscriber sub(topic_arg.getValue());
     sub.SetReceiveCallback(OnReceive);
-    std::cout << "[Subscriber] Ready and waiting...\n\n";
+    std::cout << "\n\n[Subscriber] Ready and waiting...\n\n";
 
     std::this_thread::sleep_for(std::chrono::seconds(timeout_arg.getValue()));
     eCAL::Finalize();
 
-    std::cout << "[✓] Received " << message_count << " messages.\n";
-    return message_count = 4 ? 0 : 1;
+    std::cout << "[Subscriber] Received " << message_count << " messages.\n";
+    return message_count == 4 ? 0 : 1;
   }
   catch (TCLAP::ArgException& e)
   {
-    std::cerr << "TCLAP error: " << e.error() << " (arg: " << e.argId() << ")" << std::endl;
+    std::cerr << "[Subscriber] TCLAP error: " << e.error() << " (arg: " << e.argId() << ")" << std::endl;
     return 1;
   }
 }

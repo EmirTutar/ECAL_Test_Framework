@@ -1,36 +1,129 @@
-# Multi Publisher/Subscriber Test (multi_pub_sub)
+# Multi Pub/Sub Test
 
-## Description
+## Objective
 
-This test verifies that communication between multiple publishers and subscribers works correctly over the eCAL middleware.
+This test verifies message delivery in a multi-publisher, multi-subscriber scenario using the same topic.
 
-## Scenario
+It ensures that multiple publishers can send concurrently and that all subscribers receive **all messages** correctly across different eCAL transport modes.
 
-- Two publishers send messages on the same topic:
-  - One sends the value `42`.
-  - The other sends the value `43`.
-- Two subscribers listen on that topic and check if they receive messages from both publishers.
+---
 
-## Test Objective
+## Test Setup
 
-Confirm that both subscribers can receive messages from both publishers.
+### Components
 
-Test this in **all 5 eCAL modes**:
-- `local_shm`
-- `local_udp`
-- `local_tcp`
-- `network_udp`
-- `network_tcp`
+| Component           | Container         | eCAL Mode      | Role              | Message Value |
+| ------------------- | ----------------- | ---------------| ------------------| ------------- |
+| `multi_publisher`   | `multi_local*`    | all modes      | Publisher 1       | 42            |
+| `multi_publisher2`  | `multi_local*`    | all modes      | Publisher 2       | 43            |
+| `multi_subscriber`  | `multi_local*`    | all modes      | Subscriber 1      | -             |
+| `multi_subscriber2` | `multi_local*`    | all modes      | Subscriber 2      | -             |
 
-## Success Criteria
+> In *network tests*, each component runs in its own container.
+> In *local tests*, all components run in a shared container.
 
-- Each subscriber prints a summary showing how many `42` and `43` messages it received.
-- If both values are received at least once, the subscriber exits with code `0`.
-- The `.robot` test passes only if both subscribers exit successfully.
+### Communication Structure
 
-## Structure
+1. In Local mode:
 
-- `multi_publisher.cpp`: Sends value `42`.
-- `multi_publisher2.cpp`: Sends value `43`.
-- `multi_subscriber.cpp` and `multi_subscriber2.cpp`: Receive and verify both values.
-- `multi_pub_sub.robot`: Robot Framework test file that runs the scenario in all modes.
+```
++-----------------------------------------------------+
+| Container: multi_local_tcp (or udp/shm)             |
+|                                                     |
+|  +----------------+         +----------------+      |
+|  | multi_publisher (42)     | multi_publisher2 (43) |
+|  +----------------+         +----------------+      |
+|          |                           |              |
+|          +----------- Topic ---------+              |
+|                      |                              |
+|        +--------------------------+                 |
+|        | multi_subscriber         |                 |
+|        | multi_subscriber2        |                 |
+|        +--------------------------+                 |
++----------------------------------------------------+
+
+```
+
+2. In Network mode:
+```
++------------------+     +------------------+     +------------------+     +------------------+
+| Container: pub1  |     | Container: pub2  |     | Container: sub1  |     | Container: sub2  |
+|                  |     |                  |     |                  |     |                  |
+| multi_publisher  |     | multi_publisher2 |     | multi_subscriber |     | multi_subscriber2|
+| (sends 42)       |     | (sends 43)       |     | (receives both)  |     | (receives both)  |
++--------+---------+     +---------+--------+     +--------+---------+     +---------+--------+
+         \                     /                         |                          |
+          \                   /                          |                          |
+           +------ Shared Topic on Docker Network ------ +--------------------------+
+```
+---
+
+## Test Flow
+
+1. Two publishers send messages with values 42 and 43, respectively.
+2. Two subscribers listen on the same topic and must receive messages from **both publishers**.
+3. This is repeated across all eCAL transport modes:
+   * `local_shm`, `local_udp`, `local_tcp`
+   * `network_udp`, `network_tcp`
+4. Each subscriber logs the number of received messages.
+
+---
+
+## Pass Conditions
+
+* Each subscriber exits with code `0`.
+* Each subscriber receives:
+  - **10 messages with value 42**
+  - **10 messages with value 43**
+* No connection errors or missing messages.
+
+---
+
+## Known Issues
+
+* ⚠️ In **local_tcp**, this test may fail sometimes because of race conditions or port conflicts on `127.0.0.1` when multiple publishers use the same topic. This is a known issue in eCAL TCP.
+
+---
+
+## Folder Structure
+
+```
+multi_pub_sub/
+├── scripts/
+│   ├── build_images.sh
+│   └── entrypoint.sh
+├── src/
+│   ├── multi_publisher.cpp
+│   ├── multi_publisher2.cpp
+│   ├── multi_subscriber.cpp
+│   └── multi_subscriber2.cpp
+├── robottests/
+│   └── multi_pub_sub.robot
+├── Dockerfile
+└── README.md
+```
+
+---
+
+## Running the Test
+
+```bash
+robot robottests/multi_pub_sub.robot
+```
+
+---
+
+## Why This Test Is Important
+
+Many real-world systems use multiple data sources and multiple subscribers on shared topics.
+
+This test ensures that:
+- eCAL handles **concurrent publishing** correctly.
+- Subscribers **don't miss messages** from any source.
+- Communication remains reliable across **all transport modes**.
+
+---
+
+## Note
+
+You can disable `local_tcp` in the test if it causes instability. See comments inside the `.robot` file for details.

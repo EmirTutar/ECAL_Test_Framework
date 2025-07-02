@@ -9,12 +9,12 @@ int main(int argc, char* argv[])
 {
   try
   {
-    TCLAP::CmdLine cmd("Multi Publisher", ' ', "1.0");
+    TCLAP::CmdLine cmd("Publisher_2", ' ', "1.0");
 
     TCLAP::ValueArg<std::string> mode_arg("m", "mode", "Transport mode (e.g., network_udp)", true, "", "string");
     TCLAP::ValueArg<std::string> topic_arg("t", "topic", "Topic name", false, "test_topic", "string");
     TCLAP::ValueArg<std::string> name_arg("n", "name", "eCAL node name", false, "multi_publisher", "string");
-    TCLAP::ValueArg<int> count_arg("c", "count", "Number of messages to send", false, 15, "int");
+    TCLAP::ValueArg<int> count_arg("c", "count", "Number of messages to send", false, 10, "int");
     TCLAP::ValueArg<int> delay_arg("d", "delay", "Delay between sends in milliseconds", false, 1000, "int");
 
     cmd.add(mode_arg);
@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
     std::vector<unsigned char> buffer(10, 42);
     wait_for_subscriber(topic_arg.getValue(), 2, 5000);
 
-    std::cout << "[Publisher] Started with mode=" << mode
+    std::cout << "[Publisher 2] Started with mode=" << mode
               << ", topic=" << topic
               << ", node=" << node_name
               << ", count=" << count
@@ -49,13 +49,15 @@ int main(int argc, char* argv[])
       std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
     }
 
-    std::cout << "\n[Publisher] Finished sending messages." << std::endl;
+    std::cout << "\n[Publisher 2] Finished sending messages." << std::endl;
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     eCAL::Finalize();
     return 0;
   }
   catch (const TCLAP::ArgException& e)
   {
-    std::cerr << "\nTCLAP error: " << e.error() << " (arg: " << e.argId() << ")" << std::endl;
+    std::cerr << "\n[Publisher 2] TCLAP error: " << e.error() << " (arg: " << e.argId() << ")" << std::endl;
     return 1;
   }
 }

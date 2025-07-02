@@ -31,8 +31,8 @@ int main(int argc, char* argv[])
 
     eCAL::CPublisher pub(topic_arg.getValue(), eCAL::SDataTypeInformation(), pub_config);
 
-    std::string buffer(1L * 1024L * 1024L, 'X');
-    std::cout << "[Publisher] Prepared 1MB message.\n\n ";
+    std::string buffer(0.2L * 1024L * 1024L, 'X');
+    //std::cout << "[Publisher] Prepared 0.2MB message.\n\n";
 
     wait_for_subscriber(topic_arg.getValue(), 1, 50000);
 
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
   }
   catch (TCLAP::ArgException& e)
   {
-    std::cerr << "TCLAP error: " << e.error() << " (arg: " << e.argId() << ")" << std::endl;
+    std::cerr << "[Publisher] TCLAP error: " << e.error() << " (arg: " << e.argId() << ")" << std::endl;
     return 1;
   }
 

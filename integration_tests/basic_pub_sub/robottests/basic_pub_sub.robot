@@ -1,14 +1,26 @@
 *** Comments ***
-This test checks basic communication between one publisher and one subscriber.
+This test checks basic communication between a single publisher and a single subscriber.
 
-It verifies that:
-- The publisher sends messages on a single topic.
-- The subscriber receives the messages correctly.
-- Communication works in all 5 eCAL modes: local_shm, local_udp, local_tcp, network_udp, network_tcp.
+Test Setup:
+- The publisher sends 4 messages, each 0.2 MB in size, on a single topic.
+- The subscriber listens on that topic for 6 seconds and counts received messages.
 
-Success criteria:
-- The subscriber receives a message.
-- The subscriber exits with code 0 if successful.
+Covered eCAL modes:
+- local_shm
+- local_udp
+- local_tcp
+- network_udp
+- network_tcp
+
+Goals:
+- Ensure that basic 1:1 communication works reliably across all transport modes.
+- Validate correct transmission of payloads (200 KB).
+
+Success Criteria:
+- The subscriber receives exactly 4 messages.
+- If true, it exits with code 0.
+- Otherwise, it exits with code 1.
+
 
 *** Settings ***
 Library           OperatingSystem
@@ -52,6 +64,9 @@ Init Test Context
     Set Suite Variable    ${BUILD_SCRIPT}    ${build}
     Set Suite Variable    ${NETWORK}         ${net}
 
+    ${desc}=    Get Test Description
+    Log    ${desc}
+
     Log To Console    [SETUP] Building Docker image...
     ${result}=    Run Process    ${BUILD_SCRIPT}    @{args}
     Should Be Equal As Integers    ${result.rc}    0    Failed to build Docker image!
@@ -67,12 +82,14 @@ Run Local Pub Sub Test
     Log To Console    \n[INFO] Running local pub/sub test in mode: ${layer_tag}
 
     Start Container    ${CONTAINER}    ${IMAGE}    local    ${layer_tag}    test_topic    ${CONTAINER}
-    
-    ${exit_code}=    Wait For Container Exit    ${CONTAINER}
-    Should Be Equal As Integers    ${exit_code}    0    Local communication test failed!
 
+    Sleep    9s
     ${logs}=    Get Container Logs    ${CONTAINER}
     Log To Console    \n[CONTAINER LOG: LOCAL PUB+SUB]\n${logs}
+    Log               \n[CONTAINER LOG: LOCAL PUB+SUB]\n${logs}
+
+    ${exit_code}=    Wait For Container Exit    ${CONTAINER}
+    Should Be Equal As Integers    ${exit_code}    0    Local communication test failed!
 
     Log Test Summary    Basic Pub/Sub Local ${layer_tag}    ${True}
     Stop Container      ${CONTAINER}
@@ -90,9 +107,7 @@ Run Network Pub Sub Test
     Start Container    ${SUB_NAME}    ${IMAGE}    subscriber    ${layer_tag}    ${TOPIC}    ${SUB_NAME}    network=${NETWORK}
     Start Container    ${PUB_NAME}    ${IMAGE}    publisher     ${layer_tag}    ${TOPIC}    ${PUB_NAME}    network=${NETWORK}
 
-    ${exit_code}=    Wait For Container Exit    ${SUB_NAME}
-    Should Be Equal As Integers    ${exit_code}    0    Subscriber failed in ${layer_tag}!
-
+    Sleep    9s
     ${log_sub}=    Get Container Logs    ${SUB_NAME}
     ${log_pub}=    Get Container Logs    ${PUB_NAME}
 
@@ -102,6 +117,8 @@ Run Network Pub Sub Test
     Log To Console    \n[CONTAINER LOG: SUBSCRIBER]\n${log_sub}
     Log               \n[CONTAINER LOG: SUBSCRIBER]\n${log_sub}
 
+    ${exit_code}=    Wait For Container Exit    ${SUB_NAME}
+    Should Be Equal As Integers    ${exit_code}    0    Subscriber failed in ${layer_tag}!
 
     Log Test Summary    Basic Pub/Sub Network ${layer_tag}    ${True}
 

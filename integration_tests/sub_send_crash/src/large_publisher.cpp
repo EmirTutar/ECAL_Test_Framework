@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
     // Does not get sendet by network UDP must be to big
 
     std::string buffer(50L * 1024L * 1024L, 'X');
-    std::cout << "[Publisher] Prepared 100MB message.\n";
+    std::cout << "[Publisher] Prepared 50MB message.\n";
 
     // This can be used for UDP Local for testing
     //std::string buffer(1L * 1024L, 'X');
