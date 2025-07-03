@@ -1,4 +1,5 @@
 import os
+import stat
 from jinja2 import Environment, FileSystemLoader
 
 def render_templates(test_name: str, output_dir: str):
@@ -7,11 +8,11 @@ def render_templates(test_name: str, output_dir: str):
 
     target_root = os.path.join(output_dir, test_name)
 
-    # 1. Create the full folder structure
+    # 1. Create folder structure
     for folder in folder_structure:
         os.makedirs(os.path.join(target_root, folder), exist_ok=True)
 
-    # 2. Walk through all templates and render them
+    # 2. Render templates
     for root, _, files in os.walk("templates"):
         relative_path = os.path.relpath(root, "templates")
         for file in files:
@@ -27,6 +28,10 @@ def render_templates(test_name: str, output_dir: str):
 
             with open(output_path, "w") as f:
                 f.write(rendered_content)
+
+            # 4. Make scripts executable if applicable
+            if output_filename in ["build_images.sh", "entrypoint.sh"]:
+                os.chmod(output_path, os.stat(output_path).st_mode | stat.S_IXUSR)
 
     print(f"[✓] New test folder '{test_name}' created successfully at: {target_root}")
 
