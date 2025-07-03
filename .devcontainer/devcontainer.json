@@ -17,7 +17,8 @@
       "extensions": [
         "ms-vscode.cpptools",
         "ms-python.python",
-        "d-biehl.robotcode"
+        "d-biehl.robotcode",
+        "ms-vscode.cmake-tools"
       ]
     }
   },
