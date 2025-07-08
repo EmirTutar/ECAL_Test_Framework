@@ -15,7 +15,7 @@ int main(int argc, char** argv)
   try
   {
     TCLAP::CmdLine cmd("eCAL RPC Ping Server", ' ', "1.0");
-    TCLAP::ValueArg<std::string> mode_arg("m", "mode", "eCAL mode (e.g., network_tcp, network_udp)", true, "", "string");
+    TCLAP::ValueArg<std::string> mode_arg("m", "mode", "eCAL mode (e.g., network_udp)", true, "", "string");
     TCLAP::ValueArg<std::string> name_arg("n", "name", "Node name", false, "rpc_ping_server", "string");
 
     cmd.add(mode_arg);

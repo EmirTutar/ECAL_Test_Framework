@@ -12,10 +12,10 @@ It validates that a client can successfully call a remote method ("Ping") on the
 
 ### Components
 
-| Component       | Role     | Mode         | Method | Request | Expected Response |
-|------------------|----------|--------------|--------|---------|-------------------|
-| RPC Server       | Responder | TCP/UDP      | Ping   | "PING"  | "PONG"            |
-| RPC Client       | Caller    | TCP/UDP      | Ping   | "PING"  | "PONG"            |
+| Component       | Role       | Mode         | Method | Request | Expected Response |
+|------------------|-----------|--------------|--------|---------|-------------------|
+| RPC Server       | Responder | UDP          | Ping   | "PING"  | "PONG"            |
+| RPC Client       | Caller    | UDP          | Ping   | "PING"  | "PONG"            |
 
 ### Communication
 
@@ -75,6 +75,5 @@ robot robottests/rpc_ping_test.robot
 
 ## Notes
 
-- This test helps verify correct behavior of eCAL RPC over different transport modes.
-- Separate tests are executed for both TCP and UDP network modes.
+- This test helps verify correct behavior of eCAL RPC.
 - The server and client communicate over the topic `rpc_test_service` with method name `Ping`.

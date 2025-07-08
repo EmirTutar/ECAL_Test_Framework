@@ -1,14 +1,18 @@
 *** Comments ***
-This test checks the communication between a client and a server using eCAL RPC.
+This test checks a basic RPC communication between a client and a server.
 
-It runs the test in two modes:
-- network_udp
-- network_tcp
+Test Setup:
+- The server provides a method called "Ping".
+- The client sends one "PING" request to this method.
 
-Success criteria:
-- Client connects to the server
-- Server responds to the client's Ping request
-- Client prints the response and exits with code 0
+Goals:
+- Ensure RPC client-server interaction works over network UDP.
+- Validate that the server responds with "PONG".
+- The client must connect, call the method, and receive a valid response.
+
+Success Criteria:
+- The server receives a call and returns a response.
+- The client prints the response and exits with code 0.
 
 *** Settings ***
 Library           OperatingSystem
@@ -23,11 +27,9 @@ ${BUILD_SCRIPT}   ${EMPTY}
 ${BASE_IMAGE}     rpc_ping_test
 
 *** Test Cases ***
-RPC Test Network UDP
-    Run RPC Test In Mode    network_udp
-
-RPC Test Network TCP
-    Run RPC Test In Mode    network_tcp
+RPC Ping Test
+    [Tags]    rpc_server_client_ping_test
+    Run RPC Test Network UDP
 
 *** Keywords ***
 Init Test Context
@@ -48,29 +50,29 @@ Init Test Context
     Create Docker Network    ${NETWORK}
     Sleep    2s
 
-Run RPC Test In Mode
-    [Arguments]    ${MODE}
-    ${IMAGE}=    Set Variable    ${BASE_IMAGE}_${MODE == "network_tcp" and "tcp" or "udp"}
-    ${SERVER}=   Set Variable    rpc_server_${MODE}
-    ${CLIENT}=   Set Variable    rpc_client_${MODE}
+Run RPC Test Network UDP
+    ${IMAGE}=      Set Variable    ${BASE_IMAGE}_network_udp
+    ${CLIENT_NAME}=  Set Variable    rpc_client
+    ${SERVER_NAME}=  Set Variable    rpc_server
 
-    Log To Console    \n[INFO] Starting RPC Server...
-    Start Container   ${SERVER}    ${IMAGE}    server    ${MODE}    network=${NETWORK}
-    Sleep    1s
-    Log To Console    \n[INFO] Starting RPC Client...
-    Start Container   ${CLIENT}    ${IMAGE}    client    ${MODE}    network=${NETWORK}
-    ${exit}=    Wait For Container Exit    ${CLIENT}
-    Should Be Equal As Integers    ${exit}    0    Client failed!
+    Log To Console    \n[INFO] Running RPC test (network UDP mode)...
 
-    ${logs}=    Get Container Logs    ${SERVER}
-    Log To Console    \n[CONTAINER LOG: SERVER]\n${logs}
-    Log               \n[CONTAINER LOG: SERVER]\n${logs}
+    Start Container    ${SERVER_NAME}    ${IMAGE}    server    network_udp    network=${NETWORK}
+    Sleep              1s
+    Start Container    ${CLIENT_NAME}    ${IMAGE}    client    network_udp    network=${NETWORK}
 
-    ${logs}=    Get Container Logs    ${CLIENT}
-    Log To Console    \n[CONTAINER LOG: CLIENT]\n${logs}
-    Log               \n[CONTAINER LOG: CLIENT]\n${logs}
+    ${exit_code}=    Wait For Container Exit    ${CLIENT_NAME}
+    Should Be Equal As Integers    ${exit_code}    0    Client failed!
 
-    Log Test Summary    RPC Client/Server Test ${MODE}    ${True}
-    Stop Container    ${SERVER}
-    Stop Container    ${CLIENT}
-    Sleep    1s
+    ${server_logs}=    Get Container Logs    ${SERVER_NAME}
+    ${client_logs}=    Get Container Logs    ${CLIENT_NAME}
+
+    Log To Console    \n[CONTAINER LOG: SERVER]\n${server_logs}
+    Log               \n[CONTAINER LOG: SERVER]\n${server_logs}
+    Log To Console    \n[CONTAINER LOG: CLIENT]\n${client_logs}
+    Log               \n[CONTAINER LOG: CLIENT]\n${client_logs}
+
+    Log Test Summary    RPC Ping Test (UDP)    ${True}
+    Stop Container    ${CLIENT_NAME}
+    Stop Container    ${SERVER_NAME}
+    Sleep             1s

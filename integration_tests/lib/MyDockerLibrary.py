@@ -4,6 +4,7 @@ import subprocess
 from robot.api.deco import keyword
 from robot.libraries.BuiltIn import BuiltIn
 from docker.errors import NotFound, ImageNotFound
+from docker.types import IPAMConfig, IPAMPool, EndpointConfig
 
 class MyDockerLibrary:
     def __init__(self):
@@ -29,6 +30,36 @@ class MyDockerLibrary:
         self.containers[name] = container
         return container.id
 
+    @keyword
+    def start_container_with_ip(self, name, image, *command_parts, network=None, ip=None):
+        try:
+            existing = self.client.containers.get(name)
+            existing.remove(force=True)
+        except docker.errors.NotFound:
+            pass
+
+        kwargs = {
+            "image": image,
+            "command": list(command_parts),
+            "name": name,
+            "detach": True,
+            "remove": False,
+            "network": None,  # Disable automatic network assignment
+        }
+
+        # Container starten ohne Netzwerk
+        container = self.client.containers.run(**kwargs)
+        self.containers[name] = container
+
+        # Manuell zum Netzwerk hinzufügen (falls angegeben)
+        if network and ip:
+            self.client.networks.get(network).connect(container, ipv4_address=ip)
+            BuiltIn().log_to_console(f"[✓] Connected container {name} to {network} with IP {ip}")
+        elif network:
+            self.client.networks.get(network).connect(container)
+            BuiltIn().log_to_console(f"[✓] Connected container {name} to {network} (no fixed IP)")
+
+        return container.id
 
     @keyword
     def stop_container(self, name):
@@ -182,3 +213,42 @@ class MyDockerLibrary:
                 rm=True
             )
             BuiltIn().log_to_console(f"Built image {tag}.")
+
+    @keyword
+    def disconnect_container_from_network(self, container, network):
+        self.client.api.disconnect_container_from_network(container, network)
+        BuiltIn().log_to_console(f"[SIMULATION] Disconnected {container} from {network}")
+
+    @keyword
+    def reconnect_container_to_network_with_ip(self, container, network, ip):
+        self.client.api.connect_container_to_network(
+            container,
+            network,
+            ipv4_address=ip
+        )
+        BuiltIn().log_to_console(f"[SIMULATION] Reconnected {container} to {network} with IP {ip}")
+
+    @keyword
+    def create_docker_network_with_subnet(self, name, subnet):
+        """
+        Creates a Docker bridge network with a given subnet if it does not already exist.
+        """
+        try:
+            result = subprocess.run(
+                ["docker", "network", "ls", "--filter", f"name={name}", "--format", "{{.Name}}"],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            existing_name = result.stdout.strip()
+
+            if existing_name != name:
+                BuiltIn().log_to_console(f"[INFO] Creating Docker network '{name}' with subnet {subnet}")
+                subprocess.run(
+                    ["docker", "network", "create", "--driver=bridge", f"--subnet={subnet}", name],
+                    check=True
+                )
+            else:
+                BuiltIn().log_to_console(f"[✓] Docker network '{name}' already exists with subnet {subnet}")
+        except subprocess.CalledProcessError as e:
+            BuiltIn().fail(f"[ERROR] Failed to create Docker network: {e.stderr.strip()}")
