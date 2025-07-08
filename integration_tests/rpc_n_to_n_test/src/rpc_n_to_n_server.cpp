@@ -1,3 +1,4 @@
+
 #include <ecal_config_helper.h>
 #include <ecal/ecal.h>
 #include <ecal/service/server.h>
@@ -14,9 +15,9 @@ int main(int argc, char** argv)
 {
   try
   {
-    TCLAP::CmdLine cmd("eCAL RPC Ping Server", ' ', "1.0");
-    TCLAP::ValueArg<std::string> mode_arg("m", "mode", "eCAL mode (e.g., network_tcp, network_udp)", true, "", "string");
-    TCLAP::ValueArg<std::string> name_arg("n", "name", "Node name", false, "rpc_ping_server", "string");
+    TCLAP::CmdLine cmd("eCAL RPC N-to-N Server", ' ', "1.0");
+    TCLAP::ValueArg<std::string> mode_arg("m", "mode", "eCAL mode", true, "", "string");
+    TCLAP::ValueArg<std::string> name_arg("n", "name", "Node name", false, "rpc_n_to_n_server", "string");
 
     cmd.add(mode_arg);
     cmd.add(name_arg);
@@ -41,18 +42,18 @@ int main(int argc, char** argv)
     method_info.request_type  = req_type;
     method_info.response_type = resp_type;
 
-    eCAL::CServiceServer server("rpc_test_service");
+    eCAL::CServiceServer server("rpc_n_to_n_service");
 
     server.SetMethodCallback(method_info, [](const eCAL::SServiceMethodInformation&,
                                              const std::string& request,
                                              std::string& response) -> int
     {
-      std::cout << GREEN << "[Server] Received RPC request: " << request << RESET << std::endl;
+      std::cout << GREEN << "[Server] Received RPC: " << request << RESET << std::endl;
 
       if (request == "PING")
       {
         response = "PONG";
-        std::cout << GREEN << "[Server] Responding with: PONG" << RESET << std::endl;
+        std::cout << GREEN << "[Server] Responded with: PONG" << RESET << std::endl;
         return 0;
       }
 
@@ -61,7 +62,7 @@ int main(int argc, char** argv)
       return 1;
     });
 
-    std::cout << GREEN << "[Server] Waiting for RPC calls (method: Ping)" << RESET << std::endl;
+    std::cout << GREEN << "[Server] Ready for RPC (method: Ping)" << RESET << std::endl;
 
     while (eCAL::Ok())
     {
