@@ -1,3 +1,6 @@
+# This file makes sure all text files use LF (Linux-style) line endings.
+# It prevents problems with scripts and tools when using Windows or Linux.
+
 * text=auto eol=lf
 
 *.sh  text eol=lf
