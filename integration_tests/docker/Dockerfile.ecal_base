@@ -58,4 +58,3 @@ RUN ln -s /usr/local/lib/libecaltime-localtime.so /usr/local/lib/libecaltime.so 
     ln -sf /usr/local/lib/libecal_core.so /usr/local/lib/libecal.so && \
     ldconfig
 
-COPY docker/third_party/tclap /usr/local/include/tclap
