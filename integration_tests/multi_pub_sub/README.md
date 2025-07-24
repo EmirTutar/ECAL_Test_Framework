@@ -79,12 +79,6 @@ It ensures that multiple publishers can send concurrently and that all subscribe
 
 ---
 
-## Known Issues
-
-* ⚠️ In **local_tcp**, this test may fail sometimes because of race conditions or port conflicts on `127.0.0.1` when multiple publishers use the same topic. This is a known issue in eCAL TCP.
-
----
-
 ## Folder Structure
 
 ```
@@ -121,9 +115,3 @@ This test ensures that:
 - eCAL handles **concurrent publishing** correctly.
 - Subscribers **don't miss messages** from any source.
 - Communication remains reliable across **all transport modes**.
-
----
-
-## Note
-
-You can disable `local_tcp` in the test if it causes instability. See comments inside the `.robot` file for details.

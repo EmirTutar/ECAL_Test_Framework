@@ -10,7 +10,7 @@ Test Setup:
 Covered eCAL modes:
 - local_shm
 - local_udp
-- (local_tcp)
+- local_tcp
 - network_udp
 - network_tcp
 
@@ -44,14 +44,9 @@ Multi Pub/Sub Local UDP Test
     [Tags]    multi_pub_sub_local_udp
     Run Multi Pub Sub Test Local    local_udp
 
-#Multi Pub/Sub Local TCP Test
-#    [Tags]    multi_pub_sub_local_tcp
-#    Run Multi Pub Sub Test Local    local_tcp
-
-# DISABLED: local_tcp mode fails when multiple publishers send on the same topic concurrently in one container.
-# In this setup, TCP connections on 127.0.0.1 suffer from race conditions or internal routing conflicts.
-# Not all messages are received due to internal eCAL limitations in TCP local mode.
-# Use network_tcp or other transport modes for reliable multi-pub/sub tests.
+Multi Pub/Sub Local TCP Test
+    [Tags]    multi_pub_sub_local_tcp
+    Run Multi Pub Sub Test Local    local_tcp
 
 Multi Pub/Sub Network UDP Test
     [Tags]    multi_pub_sub_network_udp
