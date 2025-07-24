@@ -3,8 +3,11 @@ FROM ecal_base
 
 WORKDIR /app
 
+# Dependencies
 # Optional: install additional packages
 # RUN apt-get update && apt-get install -y <package>
+
+RUN apt-get update && apt-get install -y libtclap-dev
 
 # Copy helper libs and sources
 COPY lib/EcalConfigHelper /app/lib/EcalConfigHelper

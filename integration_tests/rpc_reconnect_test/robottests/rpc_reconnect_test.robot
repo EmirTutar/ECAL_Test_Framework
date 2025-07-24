@@ -28,6 +28,10 @@ ${SERVER_IP}      172.28.0.11
 RPC Reconnect Test
     [Tags]    rpc_reconnect
     Run RPC Reconnect Test
+    
+RPC Reconnect Test2
+    [Tags]    rpc_reconnect
+    Run RPC Reconnect Test2
 
 *** Keywords ***
 Init Test Context
@@ -54,6 +58,36 @@ Run RPC Reconnect Test
     Disconnect Container From Network    rpc_client    ${NETWORK}
     Sleep    6s
     Reconnect Container To Network With IP    rpc_client    ${NETWORK}    ${CLIENT_IP}
+    Sleep    2s
+
+    ${log_cli}=    Get Container Logs    rpc_client
+    ${log_srv}=    Get Container Logs    rpc_server
+
+    Log To Console    \n[CONTAINER LOG: CLIENT]\n${log_cli}
+    Log To Console    \n[CONTAINER LOG: SERVER]\n${log_srv}
+    Log               \n[CONTAINER LOG: CLIENT]\n${log_cli}
+    Log               \n[CONTAINER LOG: SERVER]\n${log_srv}
+
+    ${exit_code}=    Wait For Container Exit    rpc_client
+    Should Be Equal As Integers    ${exit_code}    0    Client failed after reconnect!
+
+    Log Test Summary    RPC Reconnect Test    ${True}
+    Stop Container    rpc_client
+    Stop Container    rpc_server
+    Sleep    1s
+
+Run RPC Reconnect Test2
+    Log To Console    \n[INFO] Starting RPC Reconnect Test...
+
+    ${IMAGE}=    Set Variable    ${BASE_IMAGE}_network_udp
+
+    Start Container With IP    rpc_server    ${IMAGE}    server    network_udp    network=${NETWORK}    ip=${SERVER_IP}
+    Start Container With IP    rpc_client    ${IMAGE}    client    network_udp    network=${NETWORK}    ip=${CLIENT_IP}
+
+    Sleep    2s
+    Disconnect Container From Network    rpc_server    ${NETWORK}
+    Sleep    6s
+    Reconnect Container To Network With IP    rpc_server    ${NETWORK}    ${SERVER_IP}
     Sleep    2s
 
     ${log_cli}=    Get Container Logs    rpc_client

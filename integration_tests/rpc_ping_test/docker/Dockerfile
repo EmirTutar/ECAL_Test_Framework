@@ -5,6 +5,9 @@ ARG ROLE
 
 WORKDIR /app
 
+# Dependencies
+RUN apt-get update && apt-get install -y libtclap-dev
+
 # Copy helper lib and sources
 COPY lib/EcalConfigHelper /app/lib/EcalConfigHelper
 COPY rpc_ping_test/src/ /app/src/

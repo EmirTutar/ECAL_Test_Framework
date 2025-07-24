@@ -1,9 +1,12 @@
-# Dockerfile for rpc_ping_test
+# Dockerfile for rpc_n_to_n_test
 FROM ecal_base
 
 ARG ROLE
 
 WORKDIR /app
+
+# Dependencies
+RUN apt-get update && apt-get install -y libtclap-dev
 
 # Copy helper lib and sources
 COPY lib/EcalConfigHelper /app/lib/EcalConfigHelper
