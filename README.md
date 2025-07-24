@@ -76,14 +76,17 @@ The main goal of this project is to provide:
 
 Each test case is implemented using [Robot Framework](https://robotframework.org/), with Docker-based isolation.
 
-| Test Case         | Description                                   | README                        |
-|-------------------|-----------------------------------------------|-------------------------------|
-| basic_pub_sub     | Simple 1:1 publisher-subscriber communication | [README](integration_tests/basic_pub_sub/README.md) |
-| multi_pub_sub     | Multiple publishers and subscribers (N:N)     | [README](integration_tests/multi_pub_sub/README.md) |
-| network_crash     | Local UDP works after network disconnect      | [README](integration_tests/network_crash/README.md) |
-| pub_crash         | One publisher crashes mid-test                | [README](integration_tests/pub_crash/README.md) |
-| sub_crash         | Subscriber crashes during message receive     | [README](integration_tests/sub_crash/README.md) |
-| sub_send_crash    | Subscriber crashes during send/zero-copy test | [README](integration_tests/sub_send_crash/README.md) |
+| Test Case           | Description                                                  | README                                                            |
+|---------------------|--------------------------------------------------------------|-------------------------------------------------------------------|
+| basic_pub_sub       | Simple 1:1 publisher-subscriber communication                | [README](integration_tests/basic_pub_sub/README.md)              |
+| multi_pub_sub       | Multiple publishers and subscribers (N:N)                    | [README](integration_tests/multi_pub_sub/README.md)              |
+| network_crash       | Local UDP works after network disconnect                     | [README](integration_tests/network_crash/README.md)              |
+| pub_crash           | One publisher crashes mid-test                               | [README](integration_tests/pub_crash/README.md)                  |
+| sub_crash           | Subscriber crashes during message receive                    | [README](integration_tests/sub_crash/README.md)                  |
+| sub_send_crash      | Subscriber crashes during send/zero-copy test                | [README](integration_tests/sub_send_crash/README.md)             |
+| rpc_ping_test       | Simple RPC test with one client calling one server           | [README](integration_tests/rpc_ping_test/README.md)              |
+| rpc_reconnect_test  | RPC client disconnects and reconnects during the test        | [README](integration_tests/rpc_reconnect_test/README.md)         |
+| rpc_n_to_n_test     | Multiple RPC clients call multiple RPC servers (N:N)         | [README](integration_tests/rpc_n_to_n_test/README.md)            |
 
 ## Test Reports
 
@@ -151,16 +154,35 @@ After the test run finishes, the result (pass/fail) is reported back to the Pull
 ## Structure
 
 ```
-integration_tests/
-  ├── basic_pub_sub/
-  ├── multi_pub_sub/
-  ├── network_crash/
-  ├── pub_crash/
-  ├── sub_crash/
-  ├── sub_send_crash/
-  ├── lib/
-  └── docker/
-        └── Dockerfile.ecal_base
+.
+├── integration_tests/                       # Main directory for all test cases and supporting infrastructure
+│   ├── basic_pub_sub/                       # Test case: simple 1:1 publisher-subscriber communication
+│   ├── multi_pub_sub/                       # Test case: multiple publishers and subscribers (N:N)
+│   ├── network_crash/                       # Test case: test resilience after network disconnect
+│   ├── pub_crash/                           # Test case: publisher crashes mid-transmission
+│   ├── sub_crash/                           # Test case: subscriber crashes during reception
+│   ├── sub_send_crash/                      # Test case: subscriber crashes during send (zero-copy stress)
+│   ├── rpc_ping_test/                       # Test case: basic RPC ping between client and server
+│   ├── rpc_reconnect_test/                  # Test case: RPC reconnects after temporary disconnect
+│   ├── lib/                                 # Shared helper libraries used by multiple test cases
+│   │   ├── EcalConfigHelper/                # C++ helper to configure eCAL transport modes
+│   │   ├── DockerLibrary.py                 # Robot Framework library to manage Docker containers
+│   │   └── GlobalPathsLibrary.py            # Library to manage paths, container names, and image tags
+│   └── docker/                              # Base Dockerfile used to build test environments
+│       └── Dockerfile.ecal_base             # Base image with all dependencies (eCAL, build tools)
+│
+├──  create_new_test/                        # Generator to create new test case folder structure
+│       ├── create_new_test.py               # Python script to auto-generate new test case folders
+│       └── templates/                       # Jinja2 templates used by the generator
+│
+├── .devcontainer/                           # Devcontainer setup for local development in VS Code
+│   ├── devcontainer.json                    # Container definition for VS Code Remote Containers
+│   └── README.md                            # Instructions for using the dev container setup
+│
+├── .github/                                 # GitHub Actions CI configuration
+│   └── workflows/
+│       └── run-tests.yml                    # Main workflow file to build, test, and publish reports
+└── README.md                                # Main documentation file of the repository
 ```
 
 ## Local Development with VS Code
