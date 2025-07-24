@@ -1,11 +1,10 @@
-# RPC Reconnect Test
+# RPC N:N Test
 
 ## Objective
 
-This test verifies whether an eCAL RPC client can recover from a network disconnection
-and successfully reconnect to the RPC server.
+This test verifies N:N request-response communication in eCAL using the RPC interface.
 
-It validates that two RPC calls ("Ping") succeed — one before and one after the disconnect.
+It validates that multiple clients can simultaneously call a remote method ("Ping") on multiple servers and receive valid responses.
 
 ---
 
@@ -13,66 +12,58 @@ It validates that two RPC calls ("Ping") succeed — one before and one after th
 
 ### Components
 
-| Component   | Role      | Mode        | Method | Request | Expected Response |
-|-------------|-----------|-------------|--------|---------|-------------------|
-| RPC Server  | Responder | Network UDP | Ping   | "PING"  | "PONG"            |
-| RPC Client  | Caller    | Network UDP | Ping   | "PING"  | "PONG"            |
+| Component Type | Count | Role      | Mode         | Method | Request | Expected Response |
+|----------------|-------|-----------|--------------|--------|---------|-------------------|
+| RPC Server     | 2     | Responder | UDP (network) | Ping   | "PING"  | "PONG"            |
+| RPC Client     | 3     | Caller    | UDP (network) | Ping   | "PING"  | "PONG"            |
 
-### Communication (before and after disconnect)
+### Communication
+
+Each client sends a "PING" to both servers and expects a "PONG" in return:
 
 ```
-Step 1: Initial RPC Call
-+-------------+         Request: "PING"         +-------------+
-| RPC Client  | ------------------------------> | RPC Server  |
-|             | <------------------------------ |             |
-|             |         Response: "PONG"        |             |
-+-------------+                                 +-------------+
+  Client_1   --->   Server_1 (PING -> PONG)
+            --->   Server_2 (PING -> PONG)
 
-[Network Disconnect / Reconnect]
+  Client_2   --->   Server_1 (PING -> PONG)
+            --->   Server_2 (PING -> PONG)
 
-Step 2: Second RPC Call (after reconnect)
-+-------------+         Request: "PING"         +-------------+
-| RPC Client  | ------------------------------> | RPC Server  |
-|             | <------------------------------ |             |
-|             |         Response: "PONG"        |             |
-+-------------+                                 +-------------+
+  Client_3   --->   Server_1 (PING -> PONG)
+            --->   Server_2 (PING -> PONG)
 ```
 
 ---
 
 ## Test Flow
 
-1. Start the RPC Server and Client in fixed-IP Docker containers on a custom subnet.
-2. Client sends an initial `Ping`, waits for `PONG`.
-3. The network connection is removed from the client container.
-4. After a short delay, the client is reconnected to the same network and IP.
-5. Client attempts a second `Ping`.
-6. Client exits with code 0 only if both responses are `"PONG"`.
+1. Start two servers providing a "Ping" method.
+2. Start three clients that connect to all servers and call "Ping".
+3. Each client waits for all responses (one from each server).
+4. Each client exits with code 0 only if it receives all expected "PONG" replies.
 
 ---
 
 ## Pass Criteria
 
-- Server receives two requests and responds with `"PONG"` both times.
-- Client successfully receives both `"PONG"` responses.
-- Client exits with code `0`.
+- All servers respond to all incoming requests with `"PONG"`.
+- All clients receive 2 responses and exit with code `0`.
 
 ---
 
 ## Folder Structure
 
 ```
-rpc_reconnect_test/
+rpc_n_n_test/
 ├── docker/
 │   └── Dockerfile
 ├── robottests/
-│   └── rpc_reconnect_test.robot
+│   └── rpc_n_n_test.robot
 ├── scripts/
 │   ├── build_images.sh
 │   └── entrypoint.sh
 ├── src/
-│   ├── rpc_ping_server.cpp
-│   └── rpc_ping_client.cpp
+│   ├── rpc_n_n_server.cpp
+│   └── rpc_n_n_client.cpp
 └── README.txt
 ```
 
@@ -81,32 +72,12 @@ rpc_reconnect_test/
 ## Run the Test
 
 ```bash
-robot robottests/rpc_reconnect_test.robot
+robot robottests/rpc_n_n_test.robot
 ```
 
 ---
 
 ## Notes
 
-This test ensures that eCAL services using network UDP can recover from temporary disconnections.
-
----
-
-## Why Fixed IPs?
-
-The issue is likely caused by how multicast communication via UDP behaves when containers are disconnected and reconnected.
-
-### Background
-
-eCAL uses UDP multicast for `network_udp` communication.
-
-1. When disconnecting a container from the Docker network:
-   - It loses multicast group membership.
-   - It loses connection to the eCAL registration service (broadcast/multicast).
-
-2. After reconnecting:
-   - The container might get a new IP address, which the server no longer recognizes.
-   - Multicast sockets are not re-established automatically.
-   - The client may believe it's connected, but the server doesn't recognize it (or vice versa).
-
-**Fix:** Assigning a fixed IP and rejoining the same network ensures consistent addressing and multicast re-registration.
+- The server and client communicate over the topic `rpc_n_n_service` with method name `Ping`.
+- This test helps validate multiple parallel RPC request handling across several components.
