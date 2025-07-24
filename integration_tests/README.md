@@ -90,7 +90,7 @@ Each test supports different **eCAL transport modes**:
 
 The `lib/` folder contains shared Robot Framework libraries:
 
-* `MyDockerLibrary.py`: Starts, stops, and monitors Docker containers
+* `DockerLibrary.py`: Starts, stops, and monitors Docker containers
 * `GlobalPathsLibrary.py`: Manages test folder and image/tag resolution
 * `ecal_config_helper.cpp/h`: Helper functions for configurations of the binarys
 

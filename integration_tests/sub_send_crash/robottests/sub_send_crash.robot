@@ -23,7 +23,7 @@ Notes:
 *** Settings ***
 Library           OperatingSystem
 Library           Process
-Library           ${CURDIR}/../../lib/MyDockerLibrary.py
+Library           ${CURDIR}/../../lib/DockerLibrary.py
 Library           ${CURDIR}/../../lib/GlobalPathsLibrary.py
 Suite Setup       Init Test Context
 

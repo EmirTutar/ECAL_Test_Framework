@@ -6,7 +6,7 @@ from robot.libraries.BuiltIn import BuiltIn
 from docker.errors import NotFound, ImageNotFound
 from docker.types import IPAMConfig, IPAMPool, EndpointConfig
 
-class MyDockerLibrary:
+class DockerLibrary:
     def __init__(self):
         self.client = docker.from_env()
         self.containers = {}
